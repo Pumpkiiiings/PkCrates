@@ -1,0 +1,42 @@
+name: '<gradient:#4287f5:#42d4f5>Basic Crate</gradient>'
+
+hologram:
+  content:
+    - '<bold><gradient:#4287f5:#42d4f5>BASIC CRATE</gradient></bold>'
+    - '<gray>Use a key to open</gray>'
+  billboard: 'CENTER'
+  background-color: 'none'
+  shadowtext: true
+  scale: 1.0
+
+rewards:
+  'beginner_sword':
+    weight: 50.0
+    limit: 1
+    display_item:
+      id: STONE_SWORD
+      name: '&f&x&b&0&b&0&b&0&lBEGINNER &fSword'
+      amount: 1
+      enchants:
+        - MENDING;1
+        - SHARPNESS;1
+    items:
+      '1':
+        id: STONE_SWORD
+        name: '&f&x&b&0&b&0&b&0&lBEGINNER &fSword'
+        amount: 1
+        enchants:
+          - MENDING;1
+          - SHARPNESS;1
+  'basic_food':
+    weight: 150.0
+    display_item:
+      id: COOKED_BEEF
+      name: '&eTasty Steak'
+      amount: 16
+    items:
+      '1':
+        id: COOKED_BEEF
+        amount: 16
+    commands:
+      - 'eco give %player% 100'

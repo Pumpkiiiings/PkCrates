@@ -1,0 +1,16 @@
+title: "<light_purple>Animations for: <white><crate_id>"
+
+items:
+  animation_format:
+    name: "<yellow><bold><animation_id>"
+    active_lore:
+      - ""
+      - "<green>▶ Selected animation"
+    inactive_lore:
+      - ""
+      - "<gray>▶ Click to select"
+      
+  back:
+    material: ARROW
+    name: "<red>Back"
+    lore: []

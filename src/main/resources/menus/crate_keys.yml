@@ -1,0 +1,20 @@
+title: "<gold>Assign Keys to: <white><crate_id>"
+
+items:
+  key_format:
+    name: "<yellow><bold>Key: <white><key_id>"
+    active_lore:
+      - ""
+      - "<green><bold>▶ ACTIVE"
+      - "<gray>This crate can be opened with this key."
+      - "<red>Click to unlink."
+    inactive_lore:
+      - ""
+      - "<red><bold>▶ INACTIVE"
+      - "<gray>This crate DOES NOT accept this key."
+      - "<green>Click to link."
+      
+  back:
+    material: ARROW
+    name: "<red>Back"
+    lore: []

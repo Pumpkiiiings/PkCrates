@@ -1,0 +1,18 @@
+title: "<dark_green>Registered Keys"
+
+items:
+  key_format:
+    name: "<yellow><bold>Key: <white><key_id>"
+    lore:
+      - ""
+      - "<gray>ID: <white><key_id>"
+      - "<gray>Type: <key_type>"
+      - ""
+      - "<green>▶ Left-Click to edit"
+      - "<red>▶ Shift-Right-Click to remove"
+      
+  create:
+    material: EMERALD_BLOCK
+    name: "<green><bold>+ Create New Key"
+    lore:
+      - "<gray>Click to create a new key."

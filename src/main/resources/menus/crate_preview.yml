@@ -1,0 +1,9 @@
+title: "<dark_gray><underlined>Previewing <blue><crate_name>"
+
+items:
+  reward_format_append:
+    lore:
+      - ""
+      - "<dark_gray><strikethrough>------------------------"
+      - "<yellow>Probability: <gold><chance>%"
+      - "<dark_gray><strikethrough>------------------------"

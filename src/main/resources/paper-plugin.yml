@@ -1,0 +1,69 @@
+name: PkCrates
+version: '${version}'
+main: com.pumpkings.pkcrates.PkCratesPlugin
+api-version: '1.21'
+description: A modern crates plugin built for Paper 1.21+ and Java 21.
+bootstrapper: com.pumpkings.pkcrates.PkCratesBootstrap
+authors:
+  - Admin
+
+permissions:
+  # ── Admin ──────────────────────────────────────────────────────────────────
+  pkcrates.admin:
+    description: Full administrative access; also grants unlimited claim storage.
+    default: op
+
+  # ── Claim ──────────────────────────────────────────────────────────────────
+  pkcrates.claim:
+    description: Allows a player to open their claim menu via /crate claim.
+    default: true
+
+  pkcrates.admin.claim.inspect:
+    description: Allows inspecting another player's pending claims.
+    default: op
+
+  pkcrates.admin.claim.clear:
+    description: Allows clearing all claims for a specific player.
+    default: op
+
+  pkcrates.admin.claim.clear-all:
+    description: Allows clearing every claim for every player.
+    default: op
+
+  # ── Claim storage limits ────────────────────────────────────────────────────
+  # Assign one or more of these to a group; the highest value wins.
+  pkcrates.claim.limit.unlimited:
+    description: Grants unlimited claim storage. Overrides all numeric limits.
+    default: false
+
+  pkcrates.claim.limit.1000:
+    description: Allows storing up to 1000 pending claims.
+    default: false
+
+  pkcrates.claim.limit.500:
+    description: Allows storing up to 500 pending claims.
+    default: false
+
+  pkcrates.claim.limit.250:
+    description: Allows storing up to 250 pending claims.
+    default: false
+
+  pkcrates.claim.limit.100:
+    description: Allows storing up to 100 pending claims.
+    default: false
+
+  pkcrates.claim.limit.50:
+    description: Allows storing up to 50 pending claims.
+    default: false
+
+  pkcrates.claim.limit.25:
+    description: Allows storing up to 25 pending claims.
+    default: false
+
+  pkcrates.claim.limit.10:
+    description: Allows storing up to 10 pending claims.
+    default: false
+
+  pkcrates.claim.limit.5:
+    description: Allows storing up to 5 pending claims.
+    default: false

@@ -1,0 +1,101 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# PkCrates · Audit & Webhook System
+# Configures where and how audit events are recorded.
+# ─────────────────────────────────────────────────────────────────────────────
+
+logger:
+  # Master switch — set to false to disable all audit logging.
+  enabled: true
+
+  # When true, events are processed on a background thread.
+  # Set to false only for debugging (may impact server performance).
+  async: true
+
+  # Maximum records held in the queue before new records are discarded.
+  # The main thread never blocks — excess records are dropped with a warning.
+  queue-capacity: 10000
+
+  # Global minimum priority. Records below this level are dropped before
+  # reaching any sink. Individual sinks may set a higher threshold.
+  # Values: DEBUG | INFO | SUCCESS | WARNING | ERROR | CRITICAL
+  min-priority: INFO
+
+  # ── Event categories ────────────────────────────────────────────────────────
+  # Enable or disable entire categories of events.
+  events:
+    crates: true
+    rewards: true
+    keys: true
+    claims: true
+    admin: true
+    debug: false        # detailed debug events — keep false in production
+
+  # ── Outputs ─────────────────────────────────────────────────────────────────
+  # Quick toggles — each output also has its own enabled: flag below.
+  outputs:
+    console: true
+    discord: true
+    file: false
+    database: false
+
+  # ── Console ──────────────────────────────────────────────────────────────────
+  console:
+    enabled: true
+    min-priority: INFO
+    # Available placeholders: {timestamp}, {priority}, {event}, {actor}, {target}
+    format: "[AUDIT] [{priority}] [{event}] {actor} -> {target}"
+
+  # ── Discord webhook ───────────────────────────────────────────────────────────
+  discord:
+    enabled: true
+    # Paste your Discord webhook URL here. Keep this secret!
+    url: ""
+    username: "PkCrates"
+    avatar-url: ""
+    # Shown in the embed footer
+    server-name: "Survival"
+
+    # Retry settings for failed HTTP requests
+    retry:
+      enabled: true
+      attempts: 3          # total attempts (1 original + N-1 retries)
+      delay-seconds: 2     # base delay; doubled on each retry (2s, 4s, 8s)
+
+    # Embed border color per priority (decimal RGB, e.g. 0x57E389 = 5763969)
+    colors:
+      DEBUG:    7829503     # #777777 - gray
+      INFO:     3447003     # #3498DB - blue
+      SUCCESS:  5763969     # #57E389 - green
+      WARNING:  16776960    # #FFFF00 - yellow
+      ERROR:    15158332    # #E74C3C - red
+      CRITICAL: 10038562    # #992D22 - dark red
+
+    # Emoji prefix per event category (shown in embed title)
+    emojis:
+      CRATES:  "[Crates]"
+      REWARDS: "[Rewards]"
+      KEYS:    "[Keys]"
+      CLAIMS:  "[Claims]"
+      ADMIN:   "[Admin]"
+      DEBUG:   "[Debug]"
+
+    # Discord sink only sends records >= this priority
+    min-priority: SUCCESS
+
+  # ── File ──────────────────────────────────────────────────────────────────────
+  file:
+    enabled: false
+    # Relative to the server root
+    path: "plugins/PkCrates/audit/"
+    filename-pattern: "audit-{date}.log"
+    # Rotation strategy: daily | never
+    rotate: daily
+    # Flush buffer every N milliseconds (0 = flush every line)
+    flush-interval-ms: 500
+    min-priority: DEBUG
+
+  # ── Database (future) ─────────────────────────────────────────────────────────
+  database:
+    enabled: false
+    table: "pkcrates_audit_log"
+    min-priority: WARNING

@@ -1,0 +1,30 @@
+title: "<dark_gray>Editing Key: <green><key_id>"
+
+items:
+  base_item:
+    lore_append:
+      - ""
+      - "<yellow>↑ Current base item of the key ↑"
+      - "<gray>Click here with an item from your inventory"
+      - "<gray>to change its material, name, and texture."
+
+  rename:
+    material: NAME_TAG
+    name: "<yellow><bold>Rename Key"
+    lore:
+      - "<gray>Change the visual name of the key."
+      - ""
+      - "<green>▶ Click to rename."
+
+  type:
+    material: ENDER_CHEST
+    name: "<aqua><bold>Key Type"
+    lore:
+      - "<gray>Current: <key_type>"
+      - ""
+      - "<green>▶ Click to toggle."
+
+  back:
+    material: ARROW
+    name: "<red>Return to List"
+    lore: []

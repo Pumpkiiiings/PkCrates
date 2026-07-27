@@ -1,0 +1,26 @@
+title: "<dark_gray>Admin <gray>| <white>Your Crates"
+size: 54
+
+items:
+  create:
+    material: EMERALD
+    name: "<green><bold>+ Create New Crate"
+    lore:
+      - "<gray>Click to create a new crate."
+      
+  keys:
+    material: TRIPWIRE_HOOK
+    name: "<aqua><bold>Keys Manager"
+    lore:
+      - "<gray>Click to manage keys."
+      
+  crate_format:
+    material: ENDER_CHEST
+    name: "<gold><bold><crate_name>"
+    lore:
+      - "<gray>ID: <white><crate_id>"
+      - "<gray>Rewards: <yellow><rewards_count>"
+      - "<gray>Accepted Keys: <yellow><keys_count>"
+      - ""
+      - "<green>▶ Left-Click to edit"
+      - "<red>▶ Shift-Right-Click to remove"

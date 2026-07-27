@@ -1,0 +1,15 @@
+.gradle/
+build/
+bin/
+out/
+.idea/
+*.iml
+*.iws
+*.ipr
+analysis/
+docs/
+analysis-other-plugins/
+task.md
+Button.java
+analysis.md
+idea/

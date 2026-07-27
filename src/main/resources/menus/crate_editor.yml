@@ -1,0 +1,48 @@
+title: "<dark_gray>Dash > <crate_id> > Edit"
+
+items:
+  name:
+    material: NAME_TAG
+    name: "<yellow><bold>Edit Name"
+    lore:
+      - "<gray>Current name: <white><crate_name>"
+      - ""
+      - "<green>▶ Click to change."
+
+  rewards:
+    material: DIAMOND
+    name: "<aqua><bold>Edit Rewards"
+    lore:
+      - "<gray>Configured rewards: <white><rewards_count>"
+      - ""
+      - "<green>▶ Click to manage rewards."
+
+  keys:
+    material: TRIPWIRE_HOOK
+    name: "<gold><bold>Required Keys"
+    lore:
+      - "<gray>Currently linked keys: <white><keys_count>"
+      - ""
+      - "<green>▶ Click to assign keys."
+
+  animation:
+    material: FIREWORK_ROCKET
+    name: "<light_purple><bold>Opening Animation"
+    lore:
+      - "<gray>Current animation: <white><animation_id>"
+      - ""
+      - "<green>▶ Click to select."
+
+  locations:
+    material: BEDROCK
+    name: "<gray><bold>Locations and Hologram"
+    lore:
+      - "<gray>Configure the visual hologram"
+      - "<gray>and place crates in the world."
+      - ""
+      - "<green>▶ Click to manage."
+
+  back:
+    material: ARROW
+    name: "<red>Return to Dashboard"
+    lore: []

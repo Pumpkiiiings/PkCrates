@@ -1,0 +1,53 @@
+title: "<gold><bold>✦ Pending Rewards</bold></gold>"
+
+items:
+  # ── Reward item displayed for each pending claim ──────────────────────────
+  claim_format:
+    lore:
+      - ""
+      - "<dark_gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      - "<gray>  Crate:   <gold><crate_id>"
+      - "<gray>  Reward:  <yellow><reward_id>"
+      - "<gray>  Reason:  <white><reason>"
+      - "<gray>  Stored:  <aqua><stored_at>"
+      - "<dark_gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      - ""
+      - "<green>▶ Click to claim this reward"
+      - ""
+
+  # ── Info button — shows total / maximum stored ─────────────────────────────
+  info:
+    material: PAPER
+    name: "<aqua><bold>Pending Rewards</bold></aqua>"
+    lore:
+      - ""
+      - "<gray>Stored: <white><pending> <dark_gray>/ <white><max>"
+      - ""
+      - "<dark_gray>Rewards that could not be"
+      - "<dark_gray>delivered are stored here."
+
+  # ── Claim All button ───────────────────────────────────────────────────────
+  claim_all:
+    material: CHEST
+    name: "<green><bold>⬇ Claim All</bold></green>"
+    lore:
+      - ""
+      - "<gray>Attempts to deliver all"
+      - "<gray>pending rewards at once."
+      - ""
+      - "<green>▶ Click to claim everything"
+
+  # ── Close button ───────────────────────────────────────────────────────────
+  close:
+    material: BARRIER
+    name: "<red>Close"
+    lore: []
+
+  # ── Empty state placeholder ────────────────────────────────────────────────
+  empty:
+    material: LIME_STAINED_GLASS_PANE
+    name: "<green><bold>✓ No pending rewards!</bold></green>"
+    lore:
+      - ""
+      - "<gray>You have no stored rewards."
+      - "<gray>Keep opening crates!"

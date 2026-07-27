@@ -1,0 +1,19 @@
+title: "<dark_gray>Editor > <yellow><crate_id> <dark_gray>> Blocks"
+
+items:
+  location_format:
+    material: BEDROCK
+    name: "<yellow><bold>Physical Block"
+    lore:
+      - "<gray>World: <white><world>"
+      - "<gray>X: <white><x>"
+      - "<gray>Y: <white><y>"
+      - "<gray>Z: <white><z>"
+      - ""
+      - "<green>▶ Left-Click to teleport"
+      - "<red>▶ Shift-Right-Click to remove block"
+      
+  back:
+    material: ARROW
+    name: "<red>Return to Crate Editor"
+    lore: []

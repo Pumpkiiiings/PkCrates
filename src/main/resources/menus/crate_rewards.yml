@@ -1,0 +1,24 @@
+title: "<dark_gray>Editor > <yellow><crate_id> <dark_gray>> Rewards"
+
+items:
+  reward_format_append:
+    lore:
+      - ""
+      - "<gray>Weight (Probability): <yellow><weight>"
+      - "<gray>Global Limit: <yellow><limit>"
+      - ""
+      - "<green>▶ Left-Click to edit reward"
+      - "<red>▶ Shift-Right-Click to remove reward"
+      
+  help:
+    material: BOOK
+    name: "<aqua><bold>How to create rewards?"
+    lore:
+      - "<gray>Open your inventory (E) and click"
+      - "<gray>on any item to add it"
+      - "<gray>as a new reward automatically."
+      
+  back:
+    material: ARROW
+    name: "<red>Return to Crate Editor"
+    lore: []

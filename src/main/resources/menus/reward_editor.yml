@@ -1,0 +1,46 @@
+title: "<dark_gray>Editing Reward: <yellow><reward_id>"
+
+items:
+  weight:
+    material: GOLD_INGOT
+    name: "<gold><bold>Probability (Weight)"
+    lore:
+      - "<gray>Current weight: <white><weight>"
+      - ""
+      - "<green>▶ Left-Click to add (+1.0)"
+      - "<red>▶ Right-Click to subtract (-1.0)"
+      - "<green>▶ Shift-Left-Click (+10.0)"
+      - "<red>▶ Shift-Right-Click (-10.0)"
+
+  commands:
+    material: COMMAND_BLOCK
+    name: "<light_purple><bold>Commands to Execute"
+    lore:
+      - "<gray>Current commands: <white><cmd_count>"
+      - ""
+      - "<green>▶ Click to add a command"
+      - "<red>▶ Shift-Click to clear ALL"
+
+  display:
+    material: ITEM_FRAME
+    name: "<yellow><bold>Visual Item (Roulette)"
+    lore:
+      - "<gray>This is the item that will be shown"
+      - "<gray>spinning in the animation."
+      - ""
+      - "<green>▶ Click with an item from your inventory"
+      - "<green>  to set it as visual."
+
+  items:
+    material: CHEST
+    name: "<aqua><bold>Items to Give"
+    lore:
+      - "<gray>Amount of items: <white><items_count>"
+      - ""
+      - "<green>▶ Click to open container"
+      - "<green>  and add real items."
+
+  back:
+    material: ARROW
+    name: "<red>Return to List"
+    lore: []
