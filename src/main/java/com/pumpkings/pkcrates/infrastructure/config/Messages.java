@@ -88,5 +88,16 @@ public final class Messages {
     public static final String CLAIM_LIMIT_REACHED       = "claim.limit-reached";
     public static final String CLAIM_DISABLED            = "claim.disabled";
 
+    // Mass Opening
+    public static final String MASS_OPENING_MENU_OPENED        = "mass-opening.menu-opened";
+    public static final String MASS_OPENING_NOT_ENOUGH_KEYS    = "mass-opening.not-enough-keys";
+    public static final String MASS_OPENING_STARTED            = "mass-opening.started";
+    public static final String MASS_OPENING_COMPLETED          = "mass-opening.completed";
+    public static final String MASS_OPENING_LIMIT_REACHED      = "mass-opening.limit-reached";
+    public static final String MASS_OPENING_DISABLED           = "mass-opening.disabled";
+    public static final String MASS_OPENING_CANCELLED          = "mass-opening.cancelled";
+    public static final String MASS_OPENING_NO_PERMISSION      = "mass-opening.no-permission";
+    public static final String MASS_OPENING_IN_PROGRESS        = "mass-opening.in-progress";
+
     private Messages() {}
 }

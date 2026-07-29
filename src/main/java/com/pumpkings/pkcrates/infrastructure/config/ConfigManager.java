@@ -31,4 +31,8 @@ public class ConfigManager {
     public String getPrefix() {
         return config != null ? config.getString("settings.prefix", "<gray>[<aqua>PkCrates</aqua>] <reset>") : "";
     }
+
+    public YamlConfiguration getConfig() {
+        return config;
+    }
 }

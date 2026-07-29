@@ -195,6 +195,31 @@ public class CrateEditorMenu extends PkMenu {
             new CrateLocationMenu(plugin, menuManager, player, crate, locationMgr, hologramManager, this).open();
         }));
 
+        // Edit Mass Opening (Slot 31)
+        Material moMat = config != null ? config.getItemMaterial("items.mass_opening", Material.ENDER_CHEST) : Material.ENDER_CHEST;
+        ItemStack moItem = new ItemStack(moMat);
+        ItemMeta moMeta = moItem.getItemMeta();
+        if (moMeta != null) {
+            Map<String, String> placeholders = new HashMap<>();
+            boolean moEnabled = crate.getMassOpeningConfig() != null && crate.getMassOpeningConfig().isEnabled();
+            placeholders.put("<status>", moEnabled ? "<green>Enabled" : "<red>Disabled");
+            if (config != null) {
+                moMeta.displayName(config.getItemName("items.mass_opening", placeholders));
+                moMeta.lore(config.getItemLore("items.mass_opening", placeholders));
+            } else {
+                moMeta.displayName(TextUtil.parse("<gradient:#4287f5:#42d4f5><bold>Mass Opening</bold></gradient>"));
+                List<net.kyori.adventure.text.Component> lore = new ArrayList<>();
+                lore.add(TextUtil.parse("<gray>Status: " + (moEnabled ? "<green>Enabled" : "<red>Disabled")));
+                lore.add(net.kyori.adventure.text.Component.empty());
+                lore.add(TextUtil.parse("<green>▶ Click to configure Mass Opening."));
+                moMeta.lore(lore);
+            }
+            moItem.setItemMeta(moMeta);
+        }
+        setButton(31, new Button(moItem, event -> {
+            new MassOpeningEditorMenu(plugin, menuManager, player, crate, crateRegistry, this).open();
+        }));
+
         // Back button (To return to Dashboard)
         Material backMat = config != null ? config.getItemMaterial("items.back", Material.ARROW) : Material.ARROW;
         ItemStack back = new ItemStack(backMat);

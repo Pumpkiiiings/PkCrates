@@ -21,6 +21,9 @@ public class PkCratesPlugin extends JavaPlugin {
     private com.pumpkings.pkcrates.infrastructure.claim.ClaimConfig claimConfig;
     private com.pumpkings.pkcrates.infrastructure.audit.impl.AuditServiceImpl auditService;
     private com.pumpkings.pkcrates.infrastructure.audit.impl.AuditRetryWorker auditRetryWorker;
+    private com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings massOpeningGlobalSettings;
+    private com.pumpkings.pkcrates.core.task.MassOpeningQueue massOpeningQueue;
+    private com.pumpkings.pkcrates.core.service.MassOpeningService massOpeningService;
 
     @Override
     public void onEnable() {
@@ -94,6 +97,18 @@ public class PkCratesPlugin extends JavaPlugin {
         menuManager.setPromptManager(promptManager);
         
         com.pumpkings.pkcrates.core.service.SessionManager sessionManager = new com.pumpkings.pkcrates.core.service.SessionManager();
+
+        // Mass Opening module
+        massOpeningGlobalSettings = new com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings();
+        massOpeningGlobalSettings.load(configManager.getConfig());
+
+        massOpeningQueue = new com.pumpkings.pkcrates.core.task.MassOpeningQueue(this, claimService, claimConfig, messageManager, massOpeningGlobalSettings.getRewardsPerTick());
+        massOpeningQueue.runTaskTimer(this, 1L, 1L);
+
+        massOpeningService = new com.pumpkings.pkcrates.core.service.MassOpeningServiceImpl(
+                this, keyService, keyRegistry, sessionManager, messageManager, massOpeningGlobalSettings, massOpeningQueue
+        );
+        getServer().getServicesManager().register(com.pumpkings.pkcrates.core.service.MassOpeningService.class, massOpeningService, this, org.bukkit.plugin.ServicePriority.Normal);
         
         animationRegistry = new com.pumpkings.pkcrates.core.animation.AnimationRegistry();
         animationRegistry.register("ROULETTE", com.pumpkings.pkcrates.core.animation.impl.RouletteAnimation::new);
@@ -108,7 +123,10 @@ public class PkCratesPlugin extends JavaPlugin {
         tickTask.runTaskTimer(this, 1L, 1L);
         
         getServer().getPluginManager().registerEvents(promptManager, this);
-        getServer().getPluginManager().registerEvents(new com.pumpkings.pkcrates.presentation.listener.CrateInteractListener(this, locationMgr, crateRegistry, keyService, keyRegistry, menuManager, sessionManager, animationRegistry, tickTask, messageManager), this);
+        com.pumpkings.pkcrates.presentation.listener.CrateInteractListener crateInteractListener =
+                new com.pumpkings.pkcrates.presentation.listener.CrateInteractListener(this, locationMgr, crateRegistry, keyService, keyRegistry, menuManager, sessionManager, animationRegistry, tickTask, messageManager);
+        crateInteractListener.setMassOpeningService(massOpeningService, massOpeningGlobalSettings);
+        getServer().getPluginManager().registerEvents(crateInteractListener, this);
         getServer().getPluginManager().registerEvents(new com.pumpkings.pkcrates.presentation.listener.MenuListener(menuManager), this);
         getServer().getPluginManager().registerEvents(hologramManager, this);
         getServer().getPluginManager().registerEvents(new com.pumpkings.pkcrates.presentation.listener.ClaimLoginListener(this, claimService, claimConfig, messageManager), this);
@@ -200,5 +218,13 @@ public class PkCratesPlugin extends JavaPlugin {
     
     public com.pumpkings.pkcrates.infrastructure.config.MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public com.pumpkings.pkcrates.core.service.MassOpeningService getMassOpeningService() {
+        return massOpeningService;
+    }
+
+    public com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings getMassOpeningGlobalSettings() {
+        return massOpeningGlobalSettings;
     }
 }

@@ -91,4 +91,65 @@ public class KeyService {
         
         return CompletableFuture.completedFuture(false);
     }
+
+    /**
+     * Counts how many keys of this type the player has (virtual or physical in inventory).
+     */
+    public CompletableFuture<Integer> countKeys(Player player, IKey key) {
+        if (key.isVirtual()) {
+            return databaseManager.getVirtualKeys(player.getUniqueId(), key.getId());
+        }
+
+        int count = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            String id = extractKeyId(item);
+            if (key.getId().equals(id)) {
+                count += item.getAmount();
+            }
+        }
+        return CompletableFuture.completedFuture(count);
+    }
+
+    /**
+     * Consumes multiple keys from the player asynchronously.
+     * @return true if successfully consumed the requested amount.
+     */
+    public CompletableFuture<Boolean> consumeKeys(Player player, IKey key, int amount) {
+        if (amount <= 0) return CompletableFuture.completedFuture(true);
+
+        if (key.isVirtual()) {
+            return databaseManager.takeVirtualKeys(player.getUniqueId(), key.getId(), amount);
+        }
+
+        int count = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            String id = extractKeyId(item);
+            if (key.getId().equals(id)) {
+                count += item.getAmount();
+            }
+        }
+        if (count < amount) {
+            return CompletableFuture.completedFuture(false);
+        }
+
+        int remaining = amount;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length && remaining > 0; i++) {
+            ItemStack item = contents[i];
+            String id = extractKeyId(item);
+            if (key.getId().equals(id)) {
+                int stackAmount = item.getAmount();
+                if (stackAmount <= remaining) {
+                    remaining -= stackAmount;
+                    player.getInventory().setItem(i, null);
+                } else {
+                    item.setAmount(stackAmount - remaining);
+                    player.getInventory().setItem(i, item);
+                    remaining = 0;
+                }
+            }
+        }
+
+        return CompletableFuture.completedFuture(true);
+    }
 }

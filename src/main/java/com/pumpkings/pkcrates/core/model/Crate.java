@@ -1,6 +1,7 @@
 package com.pumpkings.pkcrates.core.model;
 
 import com.pumpkings.pkcrates.core.model.reward.IReward;
+import com.pumpkings.pkcrates.infrastructure.config.MassOpeningConfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -14,6 +15,7 @@ public class Crate {
     private double totalWeight;
     private HologramConfig hologramConfig;
     private String animationId;
+    private MassOpeningConfig massOpeningConfig;
 
     public Crate(String id, String name, List<IReward> rewards, List<String> acceptedKeys, HologramConfig hologramConfig, String animationId) {
         this.id = id;
@@ -25,6 +27,7 @@ public class Crate {
         
         // Pre-calculate the total weight so the random generator is ultra fast O(N)
         this.totalWeight = this.rewards.stream().mapToDouble(IReward::getWeight).sum();
+        this.massOpeningConfig = MassOpeningConfig.createDefault(true);
     }
 
     public String getId() {
@@ -33,6 +36,17 @@ public class Crate {
 
     public HologramConfig getHologramConfig() {
         return hologramConfig;
+    }
+
+    public MassOpeningConfig getMassOpeningConfig() {
+        if (massOpeningConfig == null) {
+            massOpeningConfig = MassOpeningConfig.createDefault(true);
+        }
+        return massOpeningConfig;
+    }
+
+    public void setMassOpeningConfig(MassOpeningConfig massOpeningConfig) {
+        this.massOpeningConfig = massOpeningConfig;
     }
 
     public void setHologramConfig(HologramConfig hologramConfig) {

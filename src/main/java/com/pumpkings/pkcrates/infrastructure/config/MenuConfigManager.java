@@ -38,6 +38,7 @@ public class MenuConfigManager {
             saveDefaultMenu("reward_editor.yml");
             saveDefaultMenu("crate_preview.yml");
             saveDefaultMenu("claim_menu.yml");
+            saveDefaultMenu("mass_opening_menu.yml");
         }
 
         File[] files = menusFolder.listFiles((dir, name) -> name.endsWith(".yml"));

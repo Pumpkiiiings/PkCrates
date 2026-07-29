@@ -52,6 +52,15 @@ public class CrateInteractListener implements Listener {
         this.messageManager = messageManager;
     }
 
+    private com.pumpkings.pkcrates.core.service.MassOpeningService massOpeningService;
+    private com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings massOpeningGlobalSettings;
+
+    public void setMassOpeningService(com.pumpkings.pkcrates.core.service.MassOpeningService massOpeningService,
+                                      com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings massOpeningGlobalSettings) {
+        this.massOpeningService = massOpeningService;
+        this.massOpeningGlobalSettings = massOpeningGlobalSettings;
+    }
+
     @EventHandler
     public void onCrateInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_BLOCK) return;
@@ -89,6 +98,37 @@ public class CrateInteractListener implements Listener {
             return;
         }
 
+        if (massOpeningService != null && massOpeningGlobalSettings != null
+                && massOpeningGlobalSettings.isEnabled()
+                && crate.getMassOpeningConfig() != null
+                && crate.getMassOpeningConfig().isEnabled()) {
+
+            if (player.isSneaking() && massOpeningGlobalSettings.isShiftRightClickOpenAll()) {
+                massOpeningService.startMassOpening(player, crate, com.pumpkings.pkcrates.core.model.massopening.MassOpeningOption.ALL_AMOUNT);
+                return;
+            }
+
+            String firstKeyId = acceptedKeys.get(0);
+            IKey firstKey = keyRegistry.getKey(firstKeyId);
+            if (firstKey != null) {
+                keyService.countKeys(player, firstKey).thenAccept(count -> {
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        if (count > 1 || !massOpeningGlobalSettings.isSkipSingleKeyMenu()) {
+                            new com.pumpkings.pkcrates.presentation.menu.user.MassOpeningMenu(
+                                    plugin, menuManager, player, crate, massOpeningService, keyService, keyRegistry).open();
+                        } else {
+                            doSingleOpening(player, crate, loc, acceptedKeys, crateId);
+                        }
+                    });
+                });
+                return;
+            }
+        }
+
+        doSingleOpening(player, crate, loc, acceptedKeys, crateId);
+    }
+
+    private void doSingleOpening(Player player, Crate crate, Location loc, List<String> acceptedKeys, String crateId) {
         // Lock session tentatively to avoid double clicks
         com.pumpkings.pkcrates.core.model.session.CrateSession tentativeSession = new com.pumpkings.pkcrates.core.model.session.CrateSession(player, crate, loc, null);
         sessionManager.startSession(loc, tentativeSession);

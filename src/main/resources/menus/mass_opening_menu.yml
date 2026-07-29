@@ -1,0 +1,35 @@
+title: "<gradient:#4287f5:#42d4f5><bold>Mass Opening: </bold></gradient><crate_name>"
+size: 36
+
+items:
+  info:
+    material: CHEST
+    name: "<aqua><bold><crate_name>"
+    lore:
+      - "<gray>Available Keys: <white><user_keys>"
+      - "<gray>Max Permitted limit: <yellow><max_allowed>"
+      - ""
+      - "<dark_gray>Select an amount below to open!"
+
+  close:
+    material: BARRIER
+    name: "<red><bold>Close Menu"
+    lore: []
+
+  option_amount:
+    material: TRIPWIRE_HOOK
+    name: "<green><bold>Open x<amount>"
+    lore:
+      - "<gray>Your Keys: <white><user_keys>"
+      - "<gray>Cost: <white><amount> keys"
+      - ""
+      - "<yellow>► Click to open!"
+
+  option_all:
+    material: NETHER_STAR
+    name: "<gradient:#f5af19:#f12711><bold>OPEN ALL</bold></gradient>"
+    lore:
+      - "<gray>Your Keys: <white><user_keys>"
+      - "<gray>Will open: <yellow><effective>x"
+      - ""
+      - "<yellow>► Click to open!"

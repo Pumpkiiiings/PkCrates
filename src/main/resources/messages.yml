@@ -84,3 +84,15 @@ claim:
   inspecting: "<gold>Inspecting claims for <player>...</gold>"
   limit-reached: "<red>This player has reached the maximum claim storage limit.</red>"
   disabled: "<red>The claim system is currently disabled.</red>"
+
+mass-opening:
+  menu-opened: "<gold>Opening mass opening selection menu...</gold>"
+  not-enough-keys: "<red>You do not have enough keys for this mass opening.</red>"
+  started: "<green>Opening <count> keys for crate <crate>...</green>"
+  completed: "<green>Mass opening completed! Rewards delivered.</green>"
+  limit-reached: "<red>You have exceeded the maximum allowed simultaneous openings limit.</red>"
+  disabled: "<red>Mass opening is disabled for this crate.</red>"
+  cancelled: "<red>Mass opening was cancelled.</red>"
+  no-permission: "<red>You don't have permission to use mass opening.</red>"
+  in-progress: "<red>You already have a crate opening in progress.</red>"
+

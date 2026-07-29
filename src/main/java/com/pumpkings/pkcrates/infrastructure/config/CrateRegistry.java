@@ -106,6 +106,8 @@ public class CrateRegistry {
             String animationId = config.getString("animation", "ROULETTE");
 
             Crate crate = new Crate(crateId, crateName, rewardList, acceptedKeys, hologramConfig, animationId);
+            ConfigurationSection massSec = config.getConfigurationSection("mass-opening");
+            crate.setMassOpeningConfig(MassOpeningConfig.parse(massSec));
             crates.put(crateId, crate);
             plugin.getLogger().info("Loaded crate: " + crateId + " with " + rewardList.size() + " rewards.");
         }
@@ -154,6 +156,10 @@ public class CrateRegistry {
             config.set("name", crate.getName());
             config.set("accepted_keys", crate.getAcceptedKeys());
             config.set("animation", crate.getAnimationId());
+            
+            if (crate.getMassOpeningConfig() != null) {
+                crate.getMassOpeningConfig().serialize(config.createSection("mass-opening"));
+            }
             
             if (crate.getHologramConfig() != null) {
                 ConfigurationSection holoSec = config.createSection("hologram");
