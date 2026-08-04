@@ -16,6 +16,9 @@ crate:
   no-keys-configured: "<red>This crate has no valid keys configured.</red>"
   no-rewards: "<red>This crate has no rewards configured!</red>"
   opening: "<green>Opening crate <crate>...</green>"
+  # Title shown while the animation plays. Leave both blank to disable it.
+  opening-title: "<aqua><bold>Opening...</bold></aqua>"
+  opening-subtitle: "<gray><crate></gray>"
   cannot-break: "<red>You cannot break a crate! Use /crate delete or remove its location first.</red>"
 
 key:

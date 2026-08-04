@@ -108,6 +108,15 @@ public class CrateRegistry {
             Crate crate = new Crate(crateId, crateName, rewardList, acceptedKeys, hologramConfig, animationId);
             ConfigurationSection massSec = config.getConfigurationSection("mass-opening");
             crate.setMassOpeningConfig(MassOpeningConfig.parse(massSec));
+
+            // Effect lines are kept verbatim; the engine compiles them on first use.
+            ConfigurationSection effectsSec = config.getConfigurationSection("effects");
+            if (effectsSec != null) {
+                for (String triggerKey : effectsSec.getKeys(false)) {
+                    crate.setEffectLines(triggerKey, effectsSec.getStringList(triggerKey));
+                }
+            }
+
             crates.put(crateId, crate);
             plugin.getLogger().info("Loaded crate: " + crateId + " with " + rewardList.size() + " rewards.");
         }
@@ -159,6 +168,12 @@ public class CrateRegistry {
             
             if (crate.getMassOpeningConfig() != null) {
                 crate.getMassOpeningConfig().serialize(config.createSection("mass-opening"));
+            }
+
+            // Written back verbatim so an editor save never drops hand-written effects.
+            if (!crate.getEffectLines().isEmpty()) {
+                ConfigurationSection effectsSec = config.createSection("effects");
+                crate.getEffectLines().forEach(effectsSec::set);
             }
             
             if (crate.getHologramConfig() != null) {

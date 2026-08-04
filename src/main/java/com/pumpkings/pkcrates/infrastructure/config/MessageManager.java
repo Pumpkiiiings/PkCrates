@@ -80,6 +80,38 @@ public class MessageManager {
         sender.sendMessage(getComponent(path));
     }
 
+    /**
+     * Shows a title/subtitle pair from the message file.
+     *
+     * <p>Either half may be blank in {@code messages.yml} to hide that line; a title whose
+     * two halves are both blank is skipped entirely, which is how a server disables the
+     * crate-opening title without editing code.</p>
+     *
+     * @param player       Recipient.
+     * @param titlePath    Message path for the title line.
+     * @param subtitlePath Message path for the subtitle line.
+     * @param placeholders Replacements applied to both lines; may be {@code null}.
+     */
+    public void showTitle(org.bukkit.entity.Player player, String titlePath, String subtitlePath,
+                          Map<String, String> placeholders) {
+
+        String rawTitle = getRawMessage(titlePath);
+        String rawSubtitle = getRawMessage(subtitlePath);
+        if ((rawTitle == null || rawTitle.isBlank()) && (rawSubtitle == null || rawSubtitle.isBlank())) {
+            return;
+        }
+
+        net.kyori.adventure.title.Title.Times times = net.kyori.adventure.title.Title.Times.times(
+                java.time.Duration.ofMillis(500),
+                java.time.Duration.ofMillis(2000),
+                java.time.Duration.ofMillis(500));
+
+        player.showTitle(net.kyori.adventure.title.Title.title(
+                getComponent(titlePath, placeholders),
+                getComponent(subtitlePath, placeholders),
+                times));
+    }
+
     public void sendMessage(CommandSender sender, String path, Map<String, String> placeholders) {
         sender.sendMessage(getComponent(path, placeholders));
     }

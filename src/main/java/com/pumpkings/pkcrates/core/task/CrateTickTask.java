@@ -70,6 +70,24 @@ public class CrateTickTask extends BukkitRunnable {
         animation.onStart(session);
     }
 
+    /**
+     * Force-ends every running animation, giving each phase a chance to despawn the
+     * display entities it created.
+     *
+     * <p>Called on shutdown and on reload. Skipping it leaves orphaned {@code TextDisplay}
+     * and item entities floating in the world with nothing left to clean them up.</p>
+     */
+    public void abortAllAnimations() {
+        for (Map.Entry<CrateSession, AnimationPhase> entry : currentAnimations.entrySet()) {
+            try {
+                entry.getValue().onEnd(entry.getKey());
+            } catch (Exception e) {
+                plugin.getLogger().warning("Error while aborting animation: " + e.getMessage());
+            }
+        }
+        currentAnimations.clear();
+    }
+
     @Override
     public void run() {
         if (sessionManager.getActiveSessions().isEmpty()) return;
@@ -79,15 +97,23 @@ public class CrateTickTask extends BukkitRunnable {
         for (CrateSession session : sessionManager.getActiveSessions()) {
             AnimationPhase currentPhase = currentAnimations.get(session);
 
-            if (currentPhase != null) {
-                currentPhase.onTick(session);
+            // One misbehaving animation must not stop the other sessions from ticking,
+            // which would strand them mid-opening and leak their session lock.
+            try {
+                if (currentPhase != null) {
+                    currentPhase.onTick(session);
 
-                if (currentPhase.isFinished(session)) {
-                    currentPhase.onEnd(session);
+                    if (currentPhase.isFinished(session)) {
+                        currentPhase.onEnd(session);
+                        session.setFinished(true);
+                    }
+                } else {
+                    // No animation registered → finish immediately
                     session.setFinished(true);
                 }
-            } else {
-                // No animation registered → finish immediately
+            } catch (Exception e) {
+                plugin.getLogger().severe("Animation error on crate '" + session.getCrate().getId()
+                        + "': " + e.getMessage());
                 session.setFinished(true);
             }
 
@@ -106,8 +132,12 @@ public class CrateTickTask extends BukkitRunnable {
             IReward wonReward = session.getWonReward();
             if (wonReward == null) continue;
 
-            Player player = session.getPlayer();
-            deliverReward(session, wonReward);
+            try {
+                deliverReward(session, wonReward);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Failed to deliver reward '" + wonReward.getId()
+                        + "': " + e.getMessage());
+            }
         }
     }
 
@@ -140,15 +170,19 @@ public class CrateTickTask extends BukkitRunnable {
 
             // Store in claims instead of delivering
             claimService.addClaim(player, reward, crateId, ClaimReason.INVENTORY_FULL);
-            
-            audit.info(com.pumpkings.pkcrates.infrastructure.audit.api.AuditEvent.CRATE_OPENED, player.getName(), crateId, 
+
+            audit.info(com.pumpkings.pkcrates.infrastructure.audit.api.AuditEvent.CRATE_OPENED, player.getName(), crateId,
                 java.util.Map.of("world", player.getWorld().getName(), "reward", reward.getId()));
+
+            playEffect(com.pumpkings.pkcrates.core.effect.EffectTrigger.ON_CLAIM_STORED, session, player);
 
             if (claimConfig.notifyOnStore()) {
                 messageManager.sendMessage(player, Messages.CLAIM_STORED_NOTIFICATION);
             }
             return;
         }
+
+        playEffect(com.pumpkings.pkcrates.core.effect.EffectTrigger.ON_REWARD, session, player);
 
         // Normal delivery
         try {
@@ -182,6 +216,7 @@ public class CrateTickTask extends BukkitRunnable {
                 com.pumpkings.pkcrates.core.model.rarity.Rarity rarity = rarityService.get(reward.getRarityId());
                 if (rarity != null) {
                     playRarityEffects(player, rarity);
+                    playRarityEffectList(player, rarity);
                     if (rarity.isBroadcastEnabled() && rarity.getAnnouncementTemplate() != null && !rarity.getAnnouncementTemplate().isEmpty()) {
                         String msg = rarity.getAnnouncementTemplate()
                             .replace("<player>", player.getName())
@@ -206,6 +241,48 @@ public class CrateTickTask extends BukkitRunnable {
                 if (claimConfig.notifyOnStore()) {
                     messageManager.sendMessage(player, Messages.CLAIM_STORED_NOTIFICATION);
                 }
+            }
+        }
+    }
+
+    /**
+     * Plays a configured effect bundle centred on the crate block.
+     *
+     * <p>The crate's own bundle wins when it defines one for the trigger; otherwise the
+     * global bundle from {@code config.yml} is used.</p>
+     */
+    private void playEffect(com.pumpkings.pkcrates.core.effect.EffectTrigger trigger,
+                            CrateSession session, Player player) {
+
+        com.pumpkings.pkcrates.core.effect.EffectEngine effects =
+                ((com.pumpkings.pkcrates.PkCratesPlugin) plugin).getEffectEngine();
+
+        effects.play(trigger,
+                session.getCrate().getEffects(trigger, effects::compile),
+                session.getBlockLocation().clone().add(0.5, 1.0, 0.5),
+                player);
+    }
+
+    /**
+     * Plays a rarity's {@code effects.list} bundle, if it defines one.
+     *
+     * <p>This runs in addition to the single legacy particle/sound/firework fields handled
+     * by {@link #playRarityEffects}, so existing rarities keep working while new ones can
+     * layer as many effects as they like.</p>
+     */
+    private void playRarityEffectList(Player player, com.pumpkings.pkcrates.core.model.rarity.Rarity rarity) {
+        java.util.List<String> lines = rarity.getEffectLines();
+        if (lines == null || lines.isEmpty()) return;
+
+        com.pumpkings.pkcrates.core.effect.EffectEngine engine =
+                ((com.pumpkings.pkcrates.PkCratesPlugin) plugin).getEffectEngine();
+
+        for (com.pumpkings.pkcrates.core.effect.EffectSpec spec
+                : engine.compile(lines, "rarity '" + rarity.getId() + "' effects.list")) {
+            try {
+                spec.play(player.getLocation(), player);
+            } catch (Exception e) {
+                plugin.getLogger().warning("Rarity effect failed for '" + rarity.getId() + "': " + e.getMessage());
             }
         }
     }

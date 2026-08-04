@@ -55,6 +55,9 @@ public class MassOpeningQueue extends BukkitRunnable {
             Player player = pending.getPlayer();
 
             if (player == null || !player.isOnline()) {
+                // Never drop undelivered rewards — park them in the claim system so the
+                // player collects them with /crate claim on their next login.
+                storeRemaining(pending, ClaimReason.PLAYER_OFFLINE);
                 iterator.remove();
                 continue;
             }
@@ -84,6 +87,49 @@ public class MassOpeningQueue extends BukkitRunnable {
                 iterator.remove();
             }
         }
+    }
+
+    /**
+     * Drains the queue into the claim system and clears it.
+     *
+     * <p>Called from {@code onDisable} so a restart mid-batch does not silently destroy
+     * rewards the player already paid keys for.</p>
+     *
+     * @return The number of rewards parked as claims.
+     */
+    public int flushToClaims() {
+        int stored = 0;
+        PendingMassOpening pending;
+        while ((pending = queue.poll()) != null) {
+            stored += storeRemaining(pending, ClaimReason.DELIVERY_ERROR);
+        }
+        return stored;
+    }
+
+    /**
+     * Moves every not-yet-delivered reward of a batch into the claim system.
+     *
+     * @return The number of rewards stored.
+     */
+    private int storeRemaining(PendingMassOpening pending, ClaimReason reason) {
+        List<IReward> remaining = pending.getRemainingRewards();
+        if (remaining.isEmpty()) return 0;
+
+        if (!claimConfig.isEnabled()) {
+            plugin.getLogger().warning("Claim system is disabled — " + remaining.size()
+                    + " mass opening reward(s) for '" + pending.getPlayerName() + "' were lost.");
+            return 0;
+        }
+
+        String crateId = pending.getCrate().getId();
+        for (IReward reward : remaining) {
+            claimService.addClaim(pending.getPlayerUuid(), reward, crateId, reason);
+        }
+        pending.incrementIndex(remaining.size());
+
+        plugin.getLogger().info("Stored " + remaining.size() + " undelivered mass opening reward(s) for '"
+                + pending.getPlayerName() + "' (" + reason.name() + ").");
+        return remaining.size();
     }
 
     private void deliverReward(Player player, String crateId, IReward reward) {

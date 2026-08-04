@@ -14,12 +14,12 @@ import com.pumpkings.pkcrates.infrastructure.claim.ClaimRepository;
 import com.pumpkings.pkcrates.infrastructure.permission.PermissionLimitResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +43,9 @@ public class ClaimServiceImpl implements ClaimService {
 
     /** Permission prefix scanned for numeric limit nodes. */
     private static final String LIMIT_PREFIX = "pkcrates.claim.limit.";
+
+    /** Main inventory + hotbar; matches the length of {@code getStorageContents()}. */
+    private static final int PLAYER_STORAGE_SLOTS = 36;
 
     private final Plugin plugin;
     private final ClaimRepository repository;
@@ -280,25 +283,24 @@ public class ClaimServiceImpl implements ClaimService {
     /**
      * Attempts to deliver all items and execute all commands of a claimed reward.
      *
-     * <p>Items are delivered via {@link org.bukkit.inventory.PlayerInventory#addItem}.
-     * If any leftover exists (inventory full), a failure result is returned and
-     * the reward remains in the repository.</p>
+     * <p>Delivery is all-or-nothing. Capacity is verified against a throwaway copy of
+     * the player's storage contents <em>before</em> anything is handed over, so a claim
+     * can never be partially delivered while remaining in the repository — that would
+     * let the player re-claim it and duplicate the items that already fit.</p>
      */
     private ClaimResult deliver(Player player, ClaimedReward claimed) {
         List<ItemStack> items = claimed.getItems();
 
         if (!items.isEmpty()) {
-            Map<Integer, ItemStack> leftovers = new HashMap<>();
-            for (ItemStack item : items) {
-                if (item == null) continue;
-                leftovers.putAll(player.getInventory().addItem(item.clone()));
+            List<ItemStack> leftovers = simulateDelivery(player, items);
+            if (!leftovers.isEmpty()) {
+                return ClaimResult.failure(claimed, leftovers, "inventory-full");
             }
 
-            if (!leftovers.isEmpty()) {
-                return ClaimResult.failure(
-                        claimed,
-                        new ArrayList<>(leftovers.values()),
-                        "inventory-full");
+            // Capacity confirmed — the real hand-over cannot leave anything behind.
+            for (ItemStack item : items) {
+                if (item == null) continue;
+                player.getInventory().addItem(item.clone());
             }
         }
 
@@ -309,5 +311,23 @@ public class ClaimServiceImpl implements ClaimService {
         }
 
         return ClaimResult.success(claimed);
+    }
+
+    /**
+     * Dry-runs the delivery against a detached inventory holding a snapshot of the
+     * player's storage slots.
+     *
+     * @return The items that would not fit; empty when the whole batch fits.
+     */
+    private List<ItemStack> simulateDelivery(Player player, List<ItemStack> items) {
+        Inventory probe = Bukkit.createInventory(null, PLAYER_STORAGE_SLOTS);
+        probe.setContents(player.getInventory().getStorageContents());
+
+        List<ItemStack> leftovers = new ArrayList<>();
+        for (ItemStack item : items) {
+            if (item == null) continue;
+            leftovers.addAll(probe.addItem(item.clone()).values());
+        }
+        return leftovers;
     }
 }

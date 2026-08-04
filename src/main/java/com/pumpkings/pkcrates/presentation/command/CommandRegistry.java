@@ -56,6 +56,7 @@ public class CommandRegistry {
                 .then(SetKeysCommand.build(keyRegistry, databaseManager, messageManager))
                 .then(KeysOfCommand.build(databaseManager, messageManager))
                 .then(BroadcastKeyCommand.build(plugin, keyRegistry, keyService, messageManager))
+                .then(MigrateCommand.build(plugin, crateRegistry, keyRegistry))
                 .build();
 
         commands.register(rootNode, "Main command for PkCrates");

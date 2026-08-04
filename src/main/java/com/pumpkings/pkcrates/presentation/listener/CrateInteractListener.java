@@ -39,6 +39,9 @@ public class CrateInteractListener implements Listener {
     private final com.pumpkings.pkcrates.core.task.CrateTickTask tickTask;
     private final MessageManager messageManager;
 
+    /** Runs future continuations on the main thread; see {@link #tryConsumeAnyKey}. */
+    private final java.util.concurrent.Executor mainThread;
+
     public CrateInteractListener(Plugin plugin, CrateLocationManager locationMgr, CrateRegistry crateRegistry, KeyService keyService, KeyRegistry keyRegistry, MenuManager menuManager, com.pumpkings.pkcrates.core.service.SessionManager sessionManager, com.pumpkings.pkcrates.core.animation.AnimationRegistry animationRegistry, com.pumpkings.pkcrates.core.task.CrateTickTask tickTask, MessageManager messageManager) {
         this.plugin = plugin;
         this.locationMgr = locationMgr;
@@ -50,6 +53,7 @@ public class CrateInteractListener implements Listener {
         this.animationRegistry = animationRegistry;
         this.tickTask = tickTask;
         this.messageManager = messageManager;
+        this.mainThread = new com.pumpkings.pkcrates.infrastructure.scheduler.MainThreadExecutor(plugin);
     }
 
     private com.pumpkings.pkcrates.core.service.MassOpeningService massOpeningService;
@@ -133,59 +137,60 @@ public class CrateInteractListener implements Listener {
         com.pumpkings.pkcrates.core.model.session.CrateSession tentativeSession = new com.pumpkings.pkcrates.core.model.session.CrateSession(player, crate, loc, null);
         sessionManager.startSession(loc, tentativeSession);
         
-        tryConsumeAnyKey(player, acceptedKeys, 0, crateId).thenAccept(usedKey -> {
-            // Must run on main thread
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                if (usedKey == null) {
-                    sessionManager.endSession(loc);
-                    messageManager.sendMessage(player, Messages.KEY_MISSING);
-                    return;
-                }
+        tryConsumeAnyKey(player, acceptedKeys, 0, crateId).whenCompleteAsync((usedKey, error) -> {
+            if (error != null) {
+                // Release the tentative lock, otherwise the crate stays "in use" forever.
+                sessionManager.endSession(loc);
+                plugin.getLogger().severe("Failed to consume a key for crate '" + crateId
+                        + "' (player: " + player.getName() + "): " + error.getMessage());
+                return;
+            }
 
-                // Generate reward
-                com.pumpkings.pkcrates.api.rarity.RarityService rarityService = ((com.pumpkings.pkcrates.PkCratesPlugin) plugin).getRarityService();
-                com.pumpkings.pkcrates.core.model.reward.IReward wonReward = com.pumpkings.pkcrates.core.service.RewardsGenerator.generateReward(crate, usedKey, rarityService);
-                
-                if (wonReward == null) {
-                    sessionManager.endSession(loc);
-                    messageManager.sendMessage(player, Messages.CRATE_NO_REWARDS);
-                    return;
-                }
+            if (usedKey == null) {
+                sessionManager.endSession(loc);
+                messageManager.sendMessage(player, Messages.KEY_MISSING);
+                return;
+            }
 
-                // Start Opening Session
-                com.pumpkings.pkcrates.core.model.session.CrateSession session = new com.pumpkings.pkcrates.core.model.session.CrateSession(player, crate, loc, wonReward);
-                sessionManager.startSession(loc, session);
+            // Generate reward
+            com.pumpkings.pkcrates.api.rarity.RarityService rarityService = ((com.pumpkings.pkcrates.PkCratesPlugin) plugin).getRarityService();
+            com.pumpkings.pkcrates.core.model.reward.IReward wonReward = com.pumpkings.pkcrates.core.service.RewardsGenerator.generateReward(crate, usedKey, rarityService);
 
-                messageManager.sendMessage(player, Messages.CRATE_OPENING, "<crate>", crate.getName());
-                
-                // --- Start Effects ---
-                player.playSound(loc, org.bukkit.Sound.BLOCK_IRON_TRAPDOOR_OPEN, 1.0f, 1.0f);
-                player.playSound(loc, org.bukkit.Sound.BLOCK_AMETHYST_BLOCK_HIT, 1.0f, 1.5f);
-                loc.getWorld().spawnParticle(org.bukkit.Particle.CRIT, loc.clone().add(0.5, 1.0, 0.5), 15, 0.2, 0.2, 0.2, 0.1);
-                
-                net.kyori.adventure.title.Title.Times times = net.kyori.adventure.title.Title.Times.times(
-                    java.time.Duration.ofMillis(500),
-                    java.time.Duration.ofMillis(2000),
-                    java.time.Duration.ofMillis(500)
-                );
-                player.showTitle(net.kyori.adventure.title.Title.title(
-                    com.pumpkings.pkcrates.presentation.utils.TextUtil.parse("<aqua><bold>Abriendo..."),
-                    com.pumpkings.pkcrates.presentation.utils.TextUtil.parse("<gray>" + crate.getName()),
-                    times
-                ));
-                // ---------------------
-                
-                // Get and play animation
-                String animId = crate.getAnimationId() != null ? crate.getAnimationId() : "ROULETTE";
-                com.pumpkings.pkcrates.core.animation.AnimationPhase animation = animationRegistry.createPhase(animId);
-                if (animation != null) {
-                    tickTask.playAnimation(session, animation);
-                } else {
-                    // If there is no registered animation, finish the session instantly
-                    session.setFinished(true);
-                }
-            });
-        });
+            if (wonReward == null) {
+                sessionManager.endSession(loc);
+                messageManager.sendMessage(player, Messages.CRATE_NO_REWARDS);
+                return;
+            }
+
+            // Start Opening Session
+            com.pumpkings.pkcrates.core.model.session.CrateSession session = new com.pumpkings.pkcrates.core.model.session.CrateSession(player, crate, loc, wonReward);
+            sessionManager.startSession(loc, session);
+
+            messageManager.sendMessage(player, Messages.CRATE_OPENING, "<crate>", crate.getName());
+
+            // Opening effects come from config: the crate's own 'effects.on-open' when it
+            // defines one, otherwise the global bundle in config.yml.
+            com.pumpkings.pkcrates.PkCratesPlugin pkPlugin = (com.pumpkings.pkcrates.PkCratesPlugin) plugin;
+            com.pumpkings.pkcrates.core.effect.EffectEngine effects = pkPlugin.getEffectEngine();
+            org.bukkit.Location effectOrigin = loc.clone().add(0.5, 1.0, 0.5);
+            effects.play(
+                    com.pumpkings.pkcrates.core.effect.EffectTrigger.ON_OPEN,
+                    crate.getEffects(com.pumpkings.pkcrates.core.effect.EffectTrigger.ON_OPEN, effects::compile),
+                    effectOrigin, player);
+
+            messageManager.showTitle(player, Messages.CRATE_OPENING_TITLE, Messages.CRATE_OPENING_SUBTITLE,
+                    java.util.Map.of("<crate>", crate.getName()));
+
+            // Get and play animation
+            String animId = crate.getAnimationId() != null ? crate.getAnimationId() : "ROULETTE";
+            com.pumpkings.pkcrates.core.animation.AnimationPhase animation = animationRegistry.createPhase(animId);
+            if (animation != null) {
+                tickTask.playAnimation(session, animation);
+            } else {
+                // If there is no registered animation, finish the session instantly
+                session.setFinished(true);
+            }
+        }, mainThread);
     }
     
     @EventHandler
@@ -211,24 +216,27 @@ public class CrateInteractListener implements Listener {
             return tryConsumeAnyKey(player, keys, index + 1, crateId);
         }
 
-        return keyService.hasKey(player, key).thenCompose(hasIt -> {
+        // Virtual keys resolve on a database thread. Hopping back to the main thread here
+        // is mandatory: the next step may consume a *physical* key from a crate that mixes
+        // both kinds, and inventory mutation is main-thread only.
+        return keyService.hasKey(player, key).thenComposeAsync(hasIt -> {
             if (hasIt) {
-                return keyService.consumeKey(player, key).thenCompose(consumed -> {
+                return keyService.consumeKey(player, key).thenComposeAsync(consumed -> {
                     if (consumed) {
-                        
-                        com.pumpkings.pkcrates.infrastructure.audit.api.AuditService audit = 
+
+                        com.pumpkings.pkcrates.infrastructure.audit.api.AuditService audit =
                             ((com.pumpkings.pkcrates.PkCratesPlugin) plugin).getAuditService();
-                        audit.info(com.pumpkings.pkcrates.infrastructure.audit.api.AuditEvent.KEY_USED, player.getName(), keyId, 
+                        audit.info(com.pumpkings.pkcrates.infrastructure.audit.api.AuditEvent.KEY_USED, player.getName(), keyId,
                             Map.of("crate", crateId));
-                            
+
                         return CompletableFuture.completedFuture(key);
                     }
                     return tryConsumeAnyKey(player, keys, index + 1, crateId);
-                });
+                }, mainThread);
             } else {
                 return tryConsumeAnyKey(player, keys, index + 1, crateId);
             }
-        });
+        }, mainThread);
     }
 }
 

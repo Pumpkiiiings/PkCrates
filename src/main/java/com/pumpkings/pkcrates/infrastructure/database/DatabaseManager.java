@@ -11,11 +11,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class DatabaseManager {
 
     private final Plugin plugin;
     private HikariDataSource dataSource;
+
+    /**
+     * Dedicated worker for all database calls.
+     *
+     * <p>Queries must not run on the {@code ForkJoinPool.commonPool()} default: blocking
+     * JDBC calls there starve unrelated parallel work, and a single thread matches the
+     * one-connection SQLite pool so writes queue instead of colliding.</p>
+     */
+    private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "PkCrates-DB");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     public DatabaseManager(Plugin plugin) {
         this.plugin = plugin;
@@ -31,11 +47,20 @@ public class DatabaseManager {
         config.setJdbcUrl("jdbc:sqlite:" + dataFolder.getAbsolutePath() + "/database.db");
         config.setDriverClassName("org.sqlite.JDBC");
         config.setPoolName("PkCrates-SQLitePool");
-        config.setMaximumPoolSize(10);
-        config.setMinimumIdle(2);
-        config.setIdleTimeout(30000);
-        config.setMaxLifetime(60000);
+
+        // SQLite serialises writes at the file level: a pool wider than one connection
+        // buys no throughput and produces SQLITE_BUSY under concurrent writes.
+        config.setMaximumPoolSize(1);
+        config.setMinimumIdle(1);
         config.setConnectionTimeout(10000);
+
+        // The single connection is long-lived; expiring it only costs reconnect churn.
+        config.setIdleTimeout(0);
+        config.setMaxLifetime(0);
+
+        // WAL keeps readers from blocking the writer; busy_timeout absorbs short contention.
+        config.addDataSourceProperty("journal_mode", "WAL");
+        config.addDataSourceProperty("busy_timeout", "5000");
 
         dataSource = new HikariDataSource(config);
         createTables();
@@ -57,7 +82,24 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Drains in-flight queries, then closes the pool.
+     *
+     * <p>Shutting the executor down first means a key purchase queued during the last
+     * tick still reaches disk instead of dying with the pool.</p>
+     */
     public void close() {
+        dbExecutor.shutdown();
+        try {
+            if (!dbExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                plugin.getLogger().warning("Database tasks did not finish within 10s; forcing shutdown.");
+                dbExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            dbExecutor.shutdownNow();
+        }
+
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
         }
@@ -79,7 +121,7 @@ public class DatabaseManager {
                 plugin.getLogger().severe("Error getting virtual keys: " + e.getMessage());
             }
             return 0;
-        });
+        }, dbExecutor);
     }
 
     public CompletableFuture<Void> addVirtualKeys(UUID uuid, String keyId, int amount) {
@@ -96,7 +138,7 @@ public class DatabaseManager {
             } catch (SQLException e) {
                 plugin.getLogger().severe("Error adding virtual keys: " + e.getMessage());
             }
-        });
+        }, dbExecutor);
     }
 
     public CompletableFuture<Boolean> takeVirtualKeys(UUID uuid, String keyId, int amount) {
@@ -137,7 +179,7 @@ public class DatabaseManager {
                 plugin.getLogger().severe("Error taking virtual keys: " + e.getMessage());
             }
             return false;
-        });
+        }, dbExecutor);
     }
     /**
      * Sets the virtual key amount for a player to an exact value.
@@ -157,7 +199,7 @@ public class DatabaseManager {
             } catch (SQLException e) {
                 plugin.getLogger().severe("Error setting virtual keys: " + e.getMessage());
             }
-        });
+        }, dbExecutor);
     }
 
     /**
@@ -179,6 +221,6 @@ public class DatabaseManager {
                 plugin.getLogger().severe("Error fetching all virtual keys: " + e.getMessage());
             }
             return keys;
-        });
+        }, dbExecutor);
     }
 }

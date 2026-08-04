@@ -19,19 +19,24 @@ public class PkCratesPlugin extends JavaPlugin {
     private com.pumpkings.pkcrates.api.rarity.RarityService rarityService;
     private com.pumpkings.pkcrates.core.service.ClaimService claimService;
     private com.pumpkings.pkcrates.infrastructure.claim.ClaimConfig claimConfig;
+    private com.pumpkings.pkcrates.infrastructure.claim.YamlClaimRepository claimRepository;
     private com.pumpkings.pkcrates.infrastructure.audit.impl.AuditServiceImpl auditService;
     private com.pumpkings.pkcrates.infrastructure.audit.impl.AuditRetryWorker auditRetryWorker;
     private com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings massOpeningGlobalSettings;
     private com.pumpkings.pkcrates.core.task.MassOpeningQueue massOpeningQueue;
     private com.pumpkings.pkcrates.core.service.MassOpeningService massOpeningService;
+    private com.pumpkings.pkcrates.core.service.SessionManager sessionManager;
+    private com.pumpkings.pkcrates.core.task.CrateTickTask tickTask;
+    private com.pumpkings.pkcrates.infrastructure.audit.config.LoggerConfig loggerConfig;
+    private com.pumpkings.pkcrates.infrastructure.display.HologramManager hologramManager;
+    private com.pumpkings.pkcrates.core.effect.EffectEngine effectEngine;
 
     @Override
     public void onEnable() {
         getLogger().info("PkCrates has been enabled! Running on Paper 1.21+ / Java 21");
 
         // 0. Audit System (Load first so other systems can use it if needed)
-        com.pumpkings.pkcrates.infrastructure.audit.config.LoggerConfig loggerConfig = 
-                new com.pumpkings.pkcrates.infrastructure.audit.config.LoggerConfig(this);
+        loggerConfig = new com.pumpkings.pkcrates.infrastructure.audit.config.LoggerConfig(this);
         loggerConfig.load();
         
         auditService = new com.pumpkings.pkcrates.infrastructure.audit.impl.AuditServiceImpl(this, loggerConfig);
@@ -55,6 +60,9 @@ public class PkCratesPlugin extends JavaPlugin {
         // 1. Configuraciones
         configManager = new com.pumpkings.pkcrates.infrastructure.config.ConfigManager(this);
         configManager.load();
+
+        effectEngine = new com.pumpkings.pkcrates.core.effect.EffectEngine(this);
+        effectEngine.loadGlobals(configManager.getConfig().getConfigurationSection("effects"));
 
         messageManager = new com.pumpkings.pkcrates.infrastructure.config.MessageManager(this);
         messageManager.loadMessages();
@@ -84,19 +92,18 @@ public class PkCratesPlugin extends JavaPlugin {
         
         keyService = new com.pumpkings.pkcrates.core.service.KeyService(this, databaseManager);
         menuManager = new com.pumpkings.pkcrates.presentation.menu.MenuManager(menuConfigManager);
-        com.pumpkings.pkcrates.infrastructure.display.HologramManager hologramManager = new com.pumpkings.pkcrates.infrastructure.display.HologramManager(this, locationMgr, crateRegistry);
+        hologramManager = new com.pumpkings.pkcrates.infrastructure.display.HologramManager(this, locationMgr, crateRegistry);
 
         // Claim module
         claimConfig = new com.pumpkings.pkcrates.infrastructure.claim.YamlClaimConfig(this);
-        com.pumpkings.pkcrates.infrastructure.claim.ClaimRepository claimRepository =
-                new com.pumpkings.pkcrates.infrastructure.claim.YamlClaimRepository(this);
+        claimRepository = new com.pumpkings.pkcrates.infrastructure.claim.YamlClaimRepository(this);
         claimService = new com.pumpkings.pkcrates.core.service.ClaimServiceImpl(this, claimRepository, claimConfig);
 
         // 3. Listeners
         com.pumpkings.pkcrates.presentation.listener.ChatPromptManager promptManager = new com.pumpkings.pkcrates.presentation.listener.ChatPromptManager(this, messageManager);
         menuManager.setPromptManager(promptManager);
         
-        com.pumpkings.pkcrates.core.service.SessionManager sessionManager = new com.pumpkings.pkcrates.core.service.SessionManager();
+        sessionManager = new com.pumpkings.pkcrates.core.service.SessionManager();
 
         // Mass Opening module
         massOpeningGlobalSettings = new com.pumpkings.pkcrates.infrastructure.config.MassOpeningGlobalSettings();
@@ -106,7 +113,8 @@ public class PkCratesPlugin extends JavaPlugin {
         massOpeningQueue.runTaskTimer(this, 1L, 1L);
 
         massOpeningService = new com.pumpkings.pkcrates.core.service.MassOpeningServiceImpl(
-                this, keyService, keyRegistry, sessionManager, messageManager, massOpeningGlobalSettings, massOpeningQueue
+                this, keyService, keyRegistry, sessionManager, messageManager, massOpeningGlobalSettings,
+                massOpeningQueue, rarityService
         );
         getServer().getServicesManager().register(com.pumpkings.pkcrates.core.service.MassOpeningService.class, massOpeningService, this, org.bukkit.plugin.ServicePriority.Normal);
         
@@ -119,7 +127,7 @@ public class PkCratesPlugin extends JavaPlugin {
         animationRegistry.register("METEOR", com.pumpkings.pkcrates.core.animation.impl.MeteorAnimation::new);
         animationRegistry.register("PORTAL", com.pumpkings.pkcrates.core.animation.impl.PortalAnimation::new);
         
-        com.pumpkings.pkcrates.core.task.CrateTickTask tickTask = new com.pumpkings.pkcrates.core.task.CrateTickTask(this, sessionManager, claimService, claimConfig, messageManager);
+        tickTask = new com.pumpkings.pkcrates.core.task.CrateTickTask(this, sessionManager, claimService, claimConfig, messageManager);
         tickTask.runTaskTimer(this, 1L, 1L);
         
         getServer().getPluginManager().registerEvents(promptManager, this);
@@ -137,10 +145,7 @@ public class PkCratesPlugin extends JavaPlugin {
                 event, this, crateRegistry, keyRegistry, locationMgr, keyService,
                 menuManager, hologramManager, messageManager, claimService, claimConfig, databaseManager)
         );
-        
-        // Guardamos la referencia para el onDisable
-        this.hologramManager = hologramManager;
-        
+
         org.bukkit.command.ConsoleCommandSender console = getServer().getConsoleSender();
         console.sendRichMessage("<gold>                                                 ");
         console.sendRichMessage("<gold>  ▄▄▄▄▄▄       ▄   ▄▄▄▄                          ");
@@ -156,10 +161,36 @@ public class PkCratesPlugin extends JavaPlugin {
         console.sendRichMessage("");
     }
     
-    private com.pumpkings.pkcrates.infrastructure.display.HologramManager hologramManager;
-
     @Override
     public void onDisable() {
+        // Order matters: rescue player-owned data before tearing down the systems that
+        // hold it, and only then close the audit and database plumbing.
+
+        // 1. Abort in-flight openings so their display entities do not survive the restart.
+        abortActiveSessions();
+        if (tickTask != null) {
+            tickTask.cancel();
+        }
+
+        // 2. Park undelivered mass opening rewards as claims — players already paid keys.
+        if (massOpeningQueue != null) {
+            int stored = massOpeningQueue.flushToClaims();
+            if (stored > 0) {
+                getLogger().info("Stored " + stored + " undelivered mass opening reward(s) as claims.");
+            }
+            massOpeningQueue.cancel();
+        }
+
+        // 3. Write buffered claims to disk synchronously.
+        if (claimRepository != null) {
+            claimRepository.shutdown();
+            claimRepository.flush();
+        }
+
+        if (hologramManager != null) {
+            hologramManager.removeAll();
+        }
+
         if (auditService != null) {
             auditService.info(com.pumpkings.pkcrates.infrastructure.audit.api.AuditEvent.PLUGIN_DISABLED, "SYSTEM", "PkCrates", null);
             auditService.shutdown();
@@ -167,16 +198,54 @@ public class PkCratesPlugin extends JavaPlugin {
         if (auditRetryWorker != null) {
             auditRetryWorker.interrupt();
         }
-        if (hologramManager != null) {
-            hologramManager.removeAll();
-        }
         if (databaseManager != null) {
             databaseManager.close();
         }
         getLogger().info("PkCrates has been disabled.");
     }
-    
+
+    /**
+     * Ends every running crate session, despawning its animation entities.
+     *
+     * <p>Each session's reward is routed through the claim system rather than delivered,
+     * because the animation never reached its payout phase. The tick task itself keeps
+     * running — callers that are shutting down cancel it separately.</p>
+     */
+    private void abortActiveSessions() {
+        if (tickTask != null) {
+            tickTask.abortAllAnimations();
+        }
+        if (sessionManager == null) return;
+
+        int aborted = 0;
+        for (com.pumpkings.pkcrates.core.model.session.CrateSession session
+                : new java.util.ArrayList<>(sessionManager.getActiveSessions())) {
+
+            com.pumpkings.pkcrates.core.model.reward.IReward reward = session.getWonReward();
+            if (reward != null && claimService != null && claimConfig != null && claimConfig.isEnabled()) {
+                claimService.addClaim(
+                        session.getPlayer().getUniqueId(), reward, session.getCrate().getId(),
+                        com.pumpkings.pkcrates.core.model.claim.ClaimReason.DELIVERY_ERROR);
+            }
+            aborted++;
+        }
+        sessionManager.cleanup();
+
+        if (aborted > 0) {
+            getLogger().info("Aborted " + aborted + " active crate session(s); rewards moved to claims.");
+        }
+    }
+
+    /**
+     * Re-reads every configuration file the plugin owns.
+     *
+     * <p>Active openings are aborted first: their animation and reward were resolved
+     * against the previous configuration and cannot be reconciled with the new one.</p>
+     */
     public void reloadPlugin() {
+        abortActiveSessions();
+
+        loggerConfig.load();
         configManager.load();
         messageManager.loadMessages();
         menuConfigManager.loadAll();
@@ -184,7 +253,9 @@ public class PkCratesPlugin extends JavaPlugin {
         crateRegistry.loadAll();
         keyRegistry.loadAll();
         locationMgr.load();
-        
+        massOpeningGlobalSettings.load(configManager.getConfig());
+        effectEngine.loadGlobals(configManager.getConfig().getConfigurationSection("effects"));
+
         if (hologramManager != null) {
             hologramManager.removeAll();
             for (org.bukkit.World world : getServer().getWorlds()) {
@@ -198,6 +269,10 @@ public class PkCratesPlugin extends JavaPlugin {
     
     public com.pumpkings.pkcrates.core.animation.AnimationRegistry getAnimationRegistry() {
         return animationRegistry;
+    }
+
+    public com.pumpkings.pkcrates.core.effect.EffectEngine getEffectEngine() {
+        return effectEngine;
     }
     
     public com.pumpkings.pkcrates.infrastructure.audit.api.AuditService getAuditService() {

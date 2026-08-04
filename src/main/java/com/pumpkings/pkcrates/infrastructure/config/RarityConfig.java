@@ -76,6 +76,7 @@ public class RarityConfig {
                     rarity.setParticle(effectsSec.getString("particle", ""));
                     rarity.setSound(effectsSec.getString("sound", ""));
                     rarity.setFireworkColor(effectsSec.getString("firework-color", ""));
+                    rarity.setEffectLines(effectsSec.getStringList("list"));
                 }
 
                 // Broadcast
@@ -139,6 +140,9 @@ public class RarityConfig {
         sec.set("effects.particle", rarity.getParticle());
         sec.set("effects.sound", rarity.getSound());
         sec.set("effects.firework-color", rarity.getFireworkColor());
+        if (!rarity.getEffectLines().isEmpty()) {
+            sec.set("effects.list", rarity.getEffectLines());
+        }
         
         // Broadcast
         sec.set("broadcast.enabled", rarity.isBroadcastEnabled());

@@ -50,4 +50,14 @@ public interface ClaimRepository {
      * Intended for administrative reset operations only.
      */
     void deleteAllPlayers();
+
+    /**
+     * Writes any buffered state to the underlying store and blocks until done.
+     *
+     * <p>Called from {@code onDisable}. Implementations that write through on every
+     * mutation may leave this as a no-op.</p>
+     */
+    default void flush() {
+        // No-op by default: write-through implementations have nothing buffered.
+    }
 }

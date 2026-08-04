@@ -19,6 +19,8 @@ public final class Messages {
     public static final String CRATE_NO_KEYS_CONFIGURED = "crate.no-keys-configured";
     public static final String CRATE_NO_REWARDS = "crate.no-rewards";
     public static final String CRATE_OPENING = "crate.opening";
+    public static final String CRATE_OPENING_TITLE = "crate.opening-title";
+    public static final String CRATE_OPENING_SUBTITLE = "crate.opening-subtitle";
     public static final String CRATE_CANNOT_BREAK = "crate.cannot-break";
 
     // Keys

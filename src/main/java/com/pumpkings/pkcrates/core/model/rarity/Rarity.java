@@ -22,6 +22,14 @@ public class Rarity {
     private String particle;
     private String sound;
     private String fireworkColor;
+
+    /**
+     * Layered effect lines from {@code effects.list}, kept raw for round-tripping.
+     *
+     * <p>Additive to the three single-value fields above, which stay supported so existing
+     * rarities.yml files keep working unchanged.</p>
+     */
+    private java.util.List<String> effectLines = new java.util.ArrayList<>();
     
     private boolean broadcastEnabled;
     private String announcementTemplate;
@@ -67,6 +75,13 @@ public class Rarity {
 
     public boolean isGlow() { return glow; }
     public void setGlow(boolean glow) { this.glow = glow; }
+
+    /** @return Raw {@code effects.list} lines; never {@code null}. */
+    public java.util.List<String> getEffectLines() { return effectLines; }
+
+    public void setEffectLines(java.util.List<String> effectLines) {
+        this.effectLines = effectLines == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(effectLines);
+    }
 
     public String getParticle() { return particle; }
     public void setParticle(String particle) { this.particle = particle; }

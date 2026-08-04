@@ -4,6 +4,7 @@ main: com.pumpkings.pkcrates.PkCratesPlugin
 api-version: '1.21'
 description: A modern crates plugin built for Paper 1.21+ and Java 21.
 bootstrapper: com.pumpkings.pkcrates.PkCratesBootstrap
+loader: com.pumpkings.pkcrates.PkCratesLoader
 authors:
   - Admin
 
@@ -28,6 +29,11 @@ permissions:
 
   pkcrates.admin.claim.clear-all:
     description: Allows clearing every claim for every player.
+    default: op
+
+  # ── Migration ──────────────────────────────────────────────────────────────
+  pkcrates.admin.migrate:
+    description: Allows importing crates from another plugin via /crate migrate.
     default: op
 
   # ── Claim storage limits ────────────────────────────────────────────────────
