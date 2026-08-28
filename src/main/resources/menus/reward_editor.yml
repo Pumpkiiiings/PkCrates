@@ -1,0 +1,64 @@
+title: "<dark_gray>ᴇᴅɪᴛɪɴɢ ʀᴇᴡᴀʀᴅ: <color:#FCFF00><reward_id>"
+
+items:
+  weight:
+    material: GOLD_INGOT
+    name: "<color:#FCFF00><bold>ᴘʀᴏʙᴀʙɪʟɪᴛʏ (ᴡᴇɪɢʜᴛ)"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ ᴡᴇɪɢʜᴛ: <white><weight>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴀᴅᴅ (+1.0)"
+      - "<color:#FF2626>▶ ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ꜱᴜʙᴛʀᴀᴄᴛ (-1.0)"
+      - "<color:#00FF45>▶ ꜱʜɪꜰᴛ-ʟᴇꜰᴛ-ᴄʟɪᴄᴋ (+10.0)"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ʀɪɢʜᴛ-ᴄʟɪᴄᴋ (-10.0)"
+
+  rarity:
+    material: NETHER_STAR
+    name: "<color:#00FFFF><bold>ʀᴀʀɪᴛʏ (ᴄᴀᴛᴇɢᴏʀʏ)"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ ʀᴀʀɪᴛʏ: <white><current_rarity>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ꜱᴇʟᴇᴄᴛ ᴀ ʀᴀʀɪᴛʏ"
+      - "<color:#FF2626>▶ ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴄʟᴇᴀʀ"
+
+  broadcast:
+    material: OAK_SIGN
+    name: "<color:#FF00FF><bold>ɢʟᴏʙᴀʟ ʙʀᴏᴀᴅᴄᴀꜱᴛ"
+    lore:
+      - "<gray>ꜱʜᴏᴜʟᴅ ɪᴛ ᴀɴɴᴏᴜɴᴄᴇ ɢʟᴏʙᴀʟʟʏ?"
+      - "<gray>ꜱᴛᴀᴛᴜꜱ: <broadcast_status>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ"
+
+  commands:
+    material: COMMAND_BLOCK
+    name: "<color:#FF7B00><bold>ᴄᴏᴍᴍᴀɴᴅꜱ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ ᴄᴏᴍᴍᴀɴᴅꜱ: <white><cmd_count>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴀᴅᴅ ᴀ ᴄᴏᴍᴍᴀɴᴅ"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴄʟᴇᴀʀ ᴀʟʟ"
+
+  display:
+    material: ITEM_FRAME
+    name: "<color:#FCFF00><bold>ᴠɪꜱᴜᴀʟ ɪᴛᴇᴍ (ʀᴏᴜʟᴇᴛᴛᴇ)"
+    lore:
+      - "<gray>ᴛʜɪꜱ ɪꜱ ᴛʜᴇ ɪᴛᴇᴍ ᴛʜᴀᴛ ᴡɪʟʟ ʙᴇ ꜱʜᴏᴡɴ"
+      - "<gray>ꜱᴘɪɴɴɪɴɢ ɪɴ ᴛʜᴇ ᴀɴɪᴍᴀᴛɪᴏɴ."
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴡɪᴛʜ ᴀɴ ɪᴛᴇᴍ ꜰʀᴏᴍ ʏᴏᴜʀ ɪɴᴠᴇɴᴛᴏʀʏ"
+      - "<color:#00FF45>  ᴛᴏ ꜱᴇᴛ ɪᴛ ᴀꜱ ᴠɪꜱᴜᴀʟ."
+
+  items:
+    material: CHEST
+    name: "<color:#00FFFF><bold>ɪᴛᴇᴍꜱ ᴛᴏ ɢɪᴠᴇ"
+    lore:
+      - "<gray>ᴀᴍᴏᴜɴᴛ ᴏꜰ ɪᴛᴇᴍꜱ: <white><items_count>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴏᴘᴇɴ ᴄᴏɴᴛᴀɪɴᴇʀ"
+      - "<color:#00FF45>  ᴀɴᴅ ᴀᴅᴅ ʀᴇᴀʟ ɪᴛᴇᴍꜱ."
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ʟɪꜱᴛ"
+    lore: []

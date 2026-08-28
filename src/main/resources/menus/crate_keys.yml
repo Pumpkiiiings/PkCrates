@@ -1,0 +1,20 @@
+title: "<dark_gray>ᴀꜱꜱɪɢɴ ᴋᴇʏꜱ ᴛᴏ: <color:#FCFF00><crate_id>"
+
+items:
+  key_format:
+    name: "<color:#FCFF00><bold>ᴋᴇʏ: <white><key_id>"
+    active_lore:
+      - ""
+      - "<color:#00FF45><bold>▶ ᴀᴄᴛɪᴠᴇ"
+      - "<gray>ᴛʜɪꜱ ᴄʀᴀᴛᴇ ᴄᴀɴ ʙᴇ ᴏᴘᴇɴᴇᴅ ᴡɪᴛʜ ᴛʜɪꜱ ᴋᴇʏ."
+      - "<color:#FF2626>ᴄʟɪᴄᴋ ᴛᴏ ᴜɴʟɪɴᴋ."
+    inactive_lore:
+      - ""
+      - "<color:#FF2626><bold>▶ ɪɴᴀᴄᴛɪᴠᴇ"
+      - "<gray>ᴛʜɪꜱ ᴄʀᴀᴛᴇ ᴅᴏᴇꜱ ɴᴏᴛ ᴀᴄᴄᴇᴘᴛ ᴛʜɪꜱ ᴋᴇʏ."
+      - "<color:#00FF45>ᴄʟɪᴄᴋ ᴛᴏ ʟɪɴᴋ."
+      
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴄʀᴀᴛᴇ ᴇᴅɪᴛᴏʀ"
+    lore: []

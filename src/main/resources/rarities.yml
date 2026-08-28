@@ -1,0 +1,54 @@
+# ====================================================== #
+#                 PkCrates - Rarities                     #
+# ====================================================== #
+# This file contains all the rarities for PkCrates.
+# Rarities can be assigned to rewards, keys, and more.
+# ====================================================== #
+
+rarities:
+  common:
+    display-name: "<gray>Common</gray>"
+    description: "The most basic items."
+    priority: 1
+    enabled: true
+    chance:
+      mode: "independent"
+      weight: 50.0
+    visuals:
+      color: "<gray>"
+      format: "<bold>{color}{text}</bold>"
+      icon: "PAPER"
+      glow: false
+    effects:
+      particle: ""
+      sound: "ENTITY_ITEM_PICKUP"
+      firework-color: ""
+    broadcast:
+      enabled: false
+      message: "<prefix> %player% just unboxed a %rarity_display% %reward%!"
+    settings:
+      default-animation: "ROULETTE"
+      permission: ""
+  legendary:
+    display-name: "<gradient:#FFD700:#FFA500>Legendary</gradient>"
+    description: "The rarest tier of items."
+    priority: 5
+    enabled: true
+    chance:
+      mode: "synced"
+      weight: 10.0
+    visuals:
+      color: "<#FFD700>"
+      format: "<bold>{color}{text}</bold>"
+      icon: "NETHER_STAR"
+      glow: true
+    effects:
+      particle: "TOTEM"
+      sound: "UI_TOAST_CHALLENGE_COMPLETE"
+      firework-color: "FFA500"
+    broadcast:
+      enabled: true
+      message: "<prefix> %player% just unboxed a %rarity_display% %reward%!"
+    settings:
+      default-animation: "CSGO"
+      permission: ""

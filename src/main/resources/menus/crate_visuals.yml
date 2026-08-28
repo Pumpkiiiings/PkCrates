@@ -1,0 +1,23 @@
+title: "<dark_gray>Vɪꜱᴜᴀʟꜱ <gray>| <white><crate_id>"
+
+items:
+  ambient:
+    material: PRISMARINE_CRYSTALS
+    name: "<color:#00CFFF><bold>ᴀᴍʙɪᴇɴᴛ ᴘᴀʀᴛɪᴄʟᴇꜱ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ ᴇꜰꜰᴇᴄᴛ: <white><ambient_id>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ꜱᴇʟᴇᴄᴛ."
+
+  animation:
+    material: FIREWORK_ROCKET
+    name: "<color:#FF00FF><bold>ᴏᴘᴇɴɪɴɢ ᴀɴɪᴍᴀᴛɪᴏɴ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ ᴀɴɪᴍᴀᴛɪᴏɴ: <white><animation_id>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ꜱᴇʟᴇᴄᴛ."
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ"
+    lore: []

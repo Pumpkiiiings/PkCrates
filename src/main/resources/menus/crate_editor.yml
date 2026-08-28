@@ -1,0 +1,58 @@
+title: "<dark_gray>ᴇᴅɪᴛ ᴄʀᴀᴛᴇ <gray>| <color:#00FF45><crate_id>"
+
+items:
+  name:
+    material: NAME_TAG
+    name: "<color:#FCFF00><bold>ᴇᴅɪᴛ ɴᴀᴍᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ ɴᴀᴍᴇ: <white><crate_name>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴄʜᴀɴɢᴇ."
+
+  rewards:
+    material: DIAMOND
+    name: "<color:#00FFFF><bold>ᴇᴅɪᴛ ʀᴇᴡᴀʀᴅꜱ"
+    lore:
+      - "<gray>ᴄᴏɴꜰɪɢᴜʀᴇᴅ ʀᴇᴡᴀʀᴅꜱ: <white><rewards_count>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴍᴀɴᴀɢᴇ ʀᴇᴡᴀʀᴅꜱ."
+
+  keys:
+    material: TRIPWIRE_HOOK
+    name: "<color:#FF00FF><bold>ʀᴇQᴜɪʀᴇᴅ ᴋᴇʏꜱ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛʟʏ ʟɪɴᴋᴇᴅ ᴋᴇʏꜱ: <white><keys_count>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴀꜱꜱɪɢɴ ᴋᴇʏꜱ."
+
+  visuals:
+    material: PRISMARINE_CRYSTALS
+    name: "<color:#00CFFF><bold>ᴠɪꜱᴜᴀʟꜱ"
+    lore:
+      - "<gray>ᴄᴏɴꜰɪɢᴜʀᴇ ᴀᴍʙɪᴇɴᴛ ᴘᴀʀᴛɪᴄʟᴇꜱ"
+      - "<gray>ᴀɴᴅ ᴏᴘᴇɴɪɴɢ ᴀɴɪᴍᴀᴛɪᴏɴꜱ."
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴍᴀɴᴀɢᴇ."
+
+
+  locations:
+    material: BEDROCK
+    name: "<color:#00FFFF><bold>ʟᴏᴄᴀᴛɪᴏɴꜱ ᴀɴᴅ ʜᴏʟᴏɢʀᴀᴍ"
+    lore:
+      - "<gray>ᴄᴏɴꜰɪɢᴜʀᴇ ᴛʜᴇ ᴠɪꜱᴜᴀʟ ʜᴏʟᴏɢʀᴀᴍ"
+      - "<gray>ᴀɴᴅ ᴘʟᴀᴄᴇ ᴄʀᴀᴛᴇꜱ ɪɴ ᴛʜᴇ ᴡᴏʀʟᴅ."
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴍᴀɴᴀɢᴇ."
+
+  mass_opening:
+    material: ENDER_CHEST
+    name: "<gradient:#4287f5:#42d4f5><bold>ᴍᴀꜱꜱ ᴏᴘᴇɴɪɴɢ</bold></gradient>"
+    lore:
+      - "<gray>ꜱᴛᴀᴛᴜꜱ: <status>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴄᴏɴꜰɪɢᴜʀᴇ ᴍᴀꜱꜱ ᴏᴘᴇɴɪɴɢ."
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴅᴀꜱʜʙᴏᴀʀᴅ"
+    lore: []

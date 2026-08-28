@@ -1,0 +1,16 @@
+title: "<dark_gray>ᴀɴɪᴍᴀᴛɪᴏɴꜱ ꜰᴏʀ: <color:#FF00FF><crate_id>"
+
+items:
+  animation_format:
+    name: "<color:#FF00FF><bold><animation_id>"
+    active_lore:
+      - ""
+      - "<color:#00FF45>▶ ꜱᴇʟᴇᴄᴛᴇᴅ ᴀɴɪᴍᴀᴛɪᴏɴ"
+    inactive_lore:
+      - ""
+      - "<gray>▶ ᴄʟɪᴄᴋ ᴛᴏ ꜱᴇʟᴇᴄᴛ"
+      
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴄʀᴀᴛᴇ ᴇᴅɪᴛᴏʀ"
+    lore: []

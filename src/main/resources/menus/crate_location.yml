@@ -1,0 +1,19 @@
+title: "<color:#8B4513>ᴇᴅɪᴛᴏʀ > <yellow><crate_id> <color:#8B4513>> ʙʟᴏᴄᴋꜱ"
+
+items:
+  location_format:
+    material: BEDROCK
+    name: "<color:#00FFFF><bold>ᴘʜʏꜱɪᴄᴀʟ ʙʟᴏᴄᴋ"
+    lore:
+      - "<gray>ᴡᴏʀʟᴅ: <white><world>"
+      - "<gray>x: <white><x>"
+      - "<gray>y: <white><y>"
+      - "<gray>z: <white><z>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴛᴇʟᴇᴘᴏʀᴛ"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ ʙʟᴏᴄᴋ"
+      
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴄʀᴀᴛᴇ ᴇᴅɪᴛᴏʀ"
+    lore: []

@@ -1,0 +1,20 @@
+title: "<dark_gray>ꜱᴇʟᴇᴄᴛ ʀᴀʀɪᴛʏ <gray>| <color:#00FF45><reward_id>"
+
+items:
+  rarity_format:
+    lore:
+      - "<gray>ɪᴅ: <white><rarity_id>"
+      - "<gray>ᴡᴇɪɢʜᴛ: <yellow><weight>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ꜱᴇʟᴇᴄᴛ ᴛʜɪꜱ ʀᴀʀɪᴛʏ"
+      
+  clear:
+    material: BARRIER
+    name: "<color:#FF2626><bold>✖ ʀᴇᴍᴏᴠᴇ ʀᴀʀɪᴛʏ"
+    lore:
+      - "<gray>ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ ʀᴀʀɪᴛʏ ꜰʀᴏᴍ ᴛʜɪꜱ ʀᴇᴡᴀʀᴅ."
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ʀᴇᴡᴀʀᴅ ᴇᴅɪᴛᴏʀ"
+    lore: []

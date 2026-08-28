@@ -1,0 +1,43 @@
+name: '<gradient:#f5a442:#f5d142>Legendary Crate</gradient>'
+animation: ROULETTE
+ambient-effect: SCULK
+
+hologram:
+  content:
+    - '<bold><gradient:#f5a442:#f5d142>LEGENDARY CRATE</gradient></bold>'
+    - '<gray>Use a Legendary key to open</gray>'
+    - '<red>(Max 1 account per IP)</red>'
+  billboard: 'CENTER'
+  background-color: 'none'
+  shadowtext: true
+  scale: 1.0
+
+rewards:
+  'legendary_sword':
+    weight: 5.0
+    limit: 1
+    display_item:
+      id: NETHERITE_SWORD
+      name: '&6&lLEGENDARY &fSword'
+      amount: 1
+      enchants:
+        - SHARPNESS;5
+        - UNBREAKING;3
+        - MENDING;1
+    items:
+      '1':
+        id: NETHERITE_SWORD
+        name: '&6&lLEGENDARY &fSword'
+        amount: 1
+        enchants:
+          - SHARPNESS;5
+          - UNBREAKING;3
+          - MENDING;1
+  'legendary_money':
+    weight: 95.0
+    display_item:
+      id: DIAMOND_BLOCK
+      name: '&a$10,000'
+      amount: 1
+    commands:
+      - 'eco give %player% 10000'

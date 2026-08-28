@@ -1,0 +1,47 @@
+title: "<dark_gray>ᴇᴅɪᴛɪɴɢ ᴋᴇʏ: <color:#00FF45><key_id>"
+
+items:
+  base_item:
+    lore_append:
+      - ""
+      - "<color:#FCFF00>↑ ᴄᴜʀʀᴇɴᴛ ʙᴀꜱᴇ ɪᴛᴇᴍ ᴏꜰ ᴛʜᴇ ᴋᴇʏ ↑"
+      - "<gray>ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴡɪᴛʜ ᴀɴ ɪᴛᴇᴍ ꜰʀᴏᴍ ʏᴏᴜʀ ɪɴᴠᴇɴᴛᴏʀʏ"
+      - "<gray>ᴛᴏ ᴄʜᴀɴɢᴇ ɪᴛꜱ ᴍᴀᴛᴇʀɪᴀʟ, ɴᴀᴍᴇ, ᴀɴᴅ ᴛᴇxᴛᴜʀᴇ."
+
+  rename:
+    material: NAME_TAG
+    name: "<color:#FCFF00><bold>ʀᴇɴᴀᴍᴇ ᴋᴇʏ"
+    lore:
+      - "<gray>ᴄʜᴀɴɢᴇ ᴛʜᴇ ᴠɪꜱᴜᴀʟ ɴᴀᴍᴇ ᴏꜰ ᴛʜᴇ ᴋᴇʏ."
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ʀᴇɴᴀᴍᴇ."
+
+  type:
+    material: ENDER_CHEST
+    name: "<color:#00FFFF><bold>ᴋᴇʏ ᴛʏᴘᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <key_type>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ."
+
+  restriction:
+    material: REPEATER
+    name: "<color:#FF00FF><bold>ʀᴀʀɪᴛʏ ʀᴇꜱᴛʀɪᴄᴛɪᴏɴ ᴛʏᴘᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><restriction_type>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ."
+
+  target:
+    material: PAPER
+    name: "<color:#FCFF00><bold>ʀᴀʀɪᴛʏ ᴛᴀʀɢᴇᴛ"
+    lore:
+      - "<gray>ᴛᴀʀɢᴇᴛ: <white><target>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+      - "<color:#FF2626>▶ ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴄʟᴇᴀʀ"
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ʟɪꜱᴛ"
+    lore: []

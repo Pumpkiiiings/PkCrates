@@ -1,0 +1,25 @@
+# Build output
+.gradle/
+build/
+bin/
+out/
+
+# The wrapper JAR is intentionally NOT ignored — it is what makes `./gradlew`
+# reproducible on a fresh clone.
+
+# IDE
+.idea/
+idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Scratch notes
+task.md
+analysis.md
+
+# Internal design docs, not shipped with the plugin
+analysis/
+analysis-other-plugins/
+docs/

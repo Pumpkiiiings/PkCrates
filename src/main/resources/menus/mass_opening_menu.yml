@@ -1,0 +1,35 @@
+title: "<gradient:#4287f5:#42d4f5><bold>ᴍᴀꜱꜱ ᴏᴘᴇɴɪɴɢ: </bold></gradient><color:#FCFF00><crate_name>"
+size: 36
+
+items:
+  info:
+    material: CHEST
+    name: "<color:#00FFFF><bold><crate_name>"
+    lore:
+      - "<gray>ᴀᴠᴀɪʟᴀʙʟᴇ ᴋᴇʏꜱ: <white><user_keys>"
+      - "<gray>ᴍᴀx ᴘᴇʀᴍɪᴛᴛᴇᴅ ʟɪᴍɪᴛ: <yellow><max_allowed>"
+      - ""
+      - "<dark_gray>ꜱᴇʟᴇᴄᴛ ᴀɴ ᴀᴍᴏᴜɴᴛ ʙᴇʟᴏᴡ ᴛᴏ ᴏᴘᴇɴ!"
+
+  close:
+    material: BARRIER
+    name: "<color:#FF2626><bold>ᴄʟᴏꜱᴇ ᴍᴇɴᴜ"
+    lore: []
+
+  option_amount:
+    material: TRIPWIRE_HOOK
+    name: "<color:#00FF45><bold>ᴏᴘᴇɴ x<amount>"
+    lore:
+      - "<gray>ʏᴏᴜʀ ᴋᴇʏꜱ: <white><user_keys>"
+      - "<gray>ᴄᴏꜱᴛ: <white><amount> ᴋᴇʏꜱ"
+      - ""
+      - "<color:#FCFF00>► ᴄʟɪᴄᴋ ᴛᴏ ᴏᴘᴇɴ!"
+
+  option_all:
+    material: NETHER_STAR
+    name: "<gradient:#f5af19:#f12711><bold>ᴏᴘᴇɴ ᴀʟʟ</bold></gradient>"
+    lore:
+      - "<gray>ʏᴏᴜʀ ᴋᴇʏꜱ: <white><user_keys>"
+      - "<gray>ᴡɪʟʟ ᴏᴘᴇɴ: <yellow><effective>x"
+      - ""
+      - "<color:#FCFF00>► ᴄʟɪᴄᴋ ᴛᴏ ᴏᴘᴇɴ!"

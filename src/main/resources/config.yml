@@ -1,0 +1,110 @@
+# PkCrates - Global configuration
+
+settings:
+  # Enable bStats metrics (recommended - helps support development)
+  metrics: true
+
+  # Chat message prefix
+  prefix: '<gray>[<gradient:#4287f5:#42d4f5>PkCrates</gradient>] <reset>'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EFFECTS
+# Particles, sounds and fireworks played at each stage of an opening.
+#
+# Every line is a set of key:value pairs in any order. Missing keys fall back to
+# a default, so short lines are fine. Unknown keys are ignored.
+#
+#   particle:<NAME>   Any Bukkit particle. REDSTONE/DUST and TOTEM/TOTEM_OF_UNDYING
+#                     are interchangeable, so configs from older versions still work.
+#   shape:<SHAPE>     POINT, CIRCLE, SPHERE, HELIX, VORTEX, BURST, BEAM, STAR, WAVE
+#   count:<N>         Particles to draw (capped at 500 per line).
+#   radius:<N>        Horizontal size, in blocks.
+#   height:<N>        Vertical size or elevation, depending on the shape.
+#   speed:<N>         Particle velocity. Use with BURST for an explosion.
+#   color:#RRGGBB     Colour, for DUST-type particles.
+#   size:<N>          Dot size, for DUST-type particles.
+#
+#   sound:<NAME>      Any Bukkit sound.  volume:<N>  pitch:<N>
+#
+#   firework:RRGGBB   Detonates instantly.  type:BALL, BALL_LARGE, STAR, BURST, CREEPER
+#
+# A crate can override any of these in its own file under 'effects:'; when it
+# does, its bundle REPLACES the one below rather than adding to it.
+# Rarities can layer their own under 'effects.list' in rarities.yml — those play
+# in addition to these.
+# ─────────────────────────────────────────────────────────────────────────────
+effects:
+  # Fired the moment the key is consumed and the animation starts.
+  on-open:
+    - 'sound:BLOCK_IRON_TRAPDOOR_OPEN volume:1.0 pitch:1.0'
+    - 'sound:BLOCK_AMETHYST_BLOCK_HIT volume:1.0 pitch:1.5'
+    - 'particle:CRIT shape:CIRCLE radius:0.7 height:0.2 count:24'
+    - 'particle:END_ROD shape:HELIX radius:0.6 height:2.2 count:40'
+
+  # Fired when the reward is handed to the player.
+  on-reward:
+    - 'sound:ENTITY_PLAYER_LEVELUP volume:1.0 pitch:1.0'
+    - 'particle:HAPPY_VILLAGER shape:WAVE radius:1.2 height:0.4 count:36'
+
+  # Fired when the reward could not be delivered and went to the claim system.
+  on-claim-stored:
+    - 'sound:BLOCK_CHEST_CLOSE volume:0.8 pitch:0.8'
+    - 'particle:SMOKE shape:BEAM radius:0.4 height:1.5 count:20'
+
+# Anti-alts: limits the number of distinct accounts that can open crates from the same IP address.
+# Set to -1 for unlimited.
+ip-limit:
+  global: -1
+  # You can define specific limits for each crate by its ID:
+  # basic: 1
+  # epic: 2
+  # legendary: 1
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CLAIM MODULE
+# Stores rewards that could not be delivered immediately so players can
+# retrieve them later via /crate claim.
+# ─────────────────────────────────────────────────────────────────────────────
+claim:
+  # Master switch — set to false to disable the entire claim system.
+  enabled: true
+
+  # Conditions under which a reward is automatically stored instead of dropped.
+  store-if:
+    # Store if the player's inventory is full at delivery time.
+    inventory-full: true
+    # Store if the player is offline when the reward is generated.
+    player-offline: true
+    # Store if any unexpected error occurs during normal delivery.
+    delivery-failed: true
+
+  # Storage limits per player.
+  #
+  # ── Permission-based limits (recommended) ─────────────────────────────────
+  # Grant one or more of the following permissions to players or groups.
+  # When a player holds multiple limit permissions, the HIGHEST value wins.
+  #
+  #   pkcrates.claim.limit.5
+  #   pkcrates.claim.limit.10
+  #   pkcrates.claim.limit.25
+  #   pkcrates.claim.limit.50
+  #   pkcrates.claim.limit.100
+  #   pkcrates.claim.limit.250
+  #   pkcrates.claim.limit.500
+  #   pkcrates.claim.limit.1000
+  #   pkcrates.claim.limit.unlimited   ← overrides all numeric permissions
+  #
+  # Players with 'pkcrates.admin' are also treated as unlimited.
+  #
+  # ── Config fallback ────────────────────────────────────────────────────────
+  # If the player has NO limit permission at all, the value below is used.
+  # Set to -1 for unlimited by default.
+  limits:
+    maximum-stored: -1
+
+  # Player notifications.
+  notifications:
+    # Notify the player on login if they have pending claims.
+    login: true
+    # Notify the player immediately when a reward is stored for them.
+    reward-stored: true

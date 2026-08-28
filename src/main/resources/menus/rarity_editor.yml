@@ -1,0 +1,96 @@
+title: "<dark_gray>ᴇᴅɪᴛ ʀᴀʀɪᴛʏ: <color:#FF2626><rarity_id>"
+
+items:
+  display_name:
+    material: NAME_TAG
+    name: "<color:#FCFF00><bold>ᴅɪꜱᴘʟᴀʏ ɴᴀᴍᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  description:
+    material: WRITABLE_BOOK
+    name: "<color:#FCFF00><bold>ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  priority:
+    material: COMPARATOR
+    name: "<color:#FCFF00><bold>ᴘʀɪᴏʀɪᴛʏ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ (+1)"
+      - "<color:#FF2626>▶ ʀɪɢʜᴛ-ᴄʟɪᴄᴋ (-1)"
+
+  chance_mode:
+    material: REPEATER
+    name: "<color:#FCFF00><bold>ᴄʜᴀɴᴄᴇ ᴍᴏᴅᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ"
+
+  weight:
+    material: GOLD_INGOT
+    name: "<color:#FCFF00><bold>ᴡᴇɪɢʜᴛ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  color:
+    material: MAGMA_CREAM
+    name: "<color:#FCFF00><bold>ᴄᴏʟᴏʀ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  mm_format:
+    material: PAPER
+    name: "<color:#FCFF00><bold>ᴍᴍ ꜰᴏʀᴍᴀᴛ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  icon:
+    material: ITEM_FRAME
+    name: "<color:#FCFF00><bold>ɪᴄᴏɴ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  glow:
+    material: GLOWSTONE_DUST
+    name: "<color:#FCFF00><bold>ɢʟᴏᴡ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ"
+
+  broadcast:
+    material: OAK_SIGN
+    name: "<color:#FCFF00><bold>ʙʀᴏᴀᴅᴄᴀꜱᴛ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ"
+
+  announcement_template:
+    material: BELL
+    name: "<color:#FCFF00><bold>ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛ ᴛᴇᴍᴘʟᴀᴛᴇ"
+    lore:
+      - "<gray>ᴄᴜʀʀᴇɴᴛ: <white><value>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ʀᴀʀɪᴛɪᴇꜱ"
+    lore: []

@@ -1,0 +1,18 @@
+title: "<color:#FCFF00>ʀᴇɢɪꜱᴛᴇʀᴇᴅ ᴋᴇʏꜱ"
+
+items:
+  key_format:
+    name: "<color:#FCFF00><bold>ᴋᴇʏ: <white><key_id>"
+    lore:
+      - ""
+      - "<gray>ɪᴅ: <white><key_id>"
+      - "<gray>ᴛʏᴘᴇ: <key_type>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ"
+      
+  create:
+    material: EMERALD_BLOCK
+    name: "<color:#00FF45><bold>+ ᴄʀᴇᴀᴛᴇ ɴᴇᴡ ᴋᴇʏ"
+    lore:
+      - "<gray>ᴄʟɪᴄᴋ ᴛᴏ ᴄʀᴇᴀᴛᴇ ᴀ ɴᴇᴡ ᴋᴇʏ."

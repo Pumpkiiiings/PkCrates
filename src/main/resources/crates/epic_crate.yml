@@ -1,0 +1,41 @@
+name: '<gradient:#d442f5:#9e42f5>Epic Crate</gradient>'
+animation: ROULETTE
+ambient-effect: CHERRY_BLOSSOM
+
+hologram:
+  content:
+    - '<bold><gradient:#d442f5:#9e42f5>EPIC CRATE</gradient></bold>'
+    - '<gray>Use an Epic key to open</gray>'
+    - '<red>(Max 2 accounts per IP)</red>'
+  billboard: 'CENTER'
+  background-color: 'none'
+  shadowtext: true
+  scale: 1.0
+
+rewards:
+  'epic_sword':
+    weight: 20.0
+    limit: 1
+    display_item:
+      id: DIAMOND_SWORD
+      name: '&5&lEPIC &fSword'
+      amount: 1
+      enchants:
+        - SHARPNESS;3
+        - UNBREAKING;3
+    items:
+      '1':
+        id: DIAMOND_SWORD
+        name: '&5&lEPIC &fSword'
+        amount: 1
+        enchants:
+          - SHARPNESS;3
+          - UNBREAKING;3
+  'epic_money':
+    weight: 80.0
+    display_item:
+      id: EMERALD
+      name: '&a$1,000'
+      amount: 1
+    commands:
+      - 'eco give %player% 1000'

@@ -1,0 +1,36 @@
+title: "<dark_gray>ᴇᴅɪᴛ ᴍᴀꜱꜱ ᴏᴘᴇɴɪɴɢ <gray>| <color:#00FF45><crate_id>"
+
+items:
+  status:
+    enabled_name: "<color:#00FF45><bold>ᴍᴀꜱꜱ ᴏᴘᴇɴɪɴɢ: ᴇɴᴀʙʟᴇᴅ"
+    enabled_lore:
+      - "<gray>ꜱᴛᴀᴛᴜꜱ: <color:#00FF45>ᴀᴄᴛɪᴠᴇ"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ ꜱᴛᴀᴛᴜꜱ"
+    disabled_name: "<color:#FF2626><bold>ᴍᴀꜱꜱ ᴏᴘᴇɴɪɴɢ: ᴅɪꜱᴀʙʟᴇᴅ"
+    disabled_lore:
+      - "<gray>ꜱᴛᴀᴛᴜꜱ: <color:#FF2626>ɪɴᴀᴄᴛɪᴠᴇ"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴛᴏɢɢʟᴇ ꜱᴛᴀᴛᴜꜱ"
+      
+  add_option:
+    material: NETHER_STAR
+    name: "<color:#FCFF00><bold>ᴀᴅᴅ ᴏᴘᴇɴɪɴɢ ᴀᴍᴏᴜɴᴛ"
+    lore:
+      - "<gray>ᴀᴅᴅ ᴀ ɴᴇᴡ ɴᴜᴍᴇʀɪᴄ ᴏᴘᴛɪᴏɴ"
+      - "<gray>(ᴇ.ɢ. 10, 25, 50, ᴏʀ ALL)"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴀᴅᴅ"
+      
+  option_format:
+    all_name: "<color:#FCFF00><bold>ᴏᴘᴛɪᴏɴ: ᴀʟʟ"
+    amount_name: "<color:#FCFF00><bold>ᴏᴘᴛɪᴏɴ: x<amount>"
+    lore:
+      - "<gray>ᴀʟʟᴏᴡꜱ ᴏᴘᴇɴɪɴɢ <amount_text>"
+      - ""
+      - "<color:#FF2626>▶ ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ ᴛʜɪꜱ ᴏᴘᴛɪᴏɴ"
+      
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴄʀᴀᴛᴇ ᴇᴅɪᴛᴏʀ"
+    lore: []

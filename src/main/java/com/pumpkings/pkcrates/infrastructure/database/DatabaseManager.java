@@ -1,0 +1,299 @@
+package com.pumpkings.pkcrates.infrastructure.database;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class DatabaseManager {
+
+    private final Plugin plugin;
+    private HikariDataSource dataSource;
+
+    /**
+     * Dedicated worker for all database calls.
+     *
+     * <p>Queries must not run on the {@code ForkJoinPool.commonPool()} default: blocking
+     * JDBC calls there starve unrelated parallel work, and a single thread matches the
+     * one-connection SQLite pool so writes queue instead of colliding.</p>
+     */
+    private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "PkCrates-DB");
+        thread.setDaemon(true);
+        return thread;
+    });
+
+    public DatabaseManager(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public void connect() {
+        File dataFolder = plugin.getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:sqlite:" + dataFolder.getAbsolutePath() + "/data.db");
+        config.setDriverClassName("org.sqlite.JDBC");
+        config.setPoolName("PkCrates-SQLitePool");
+
+        // SQLite serialises writes at the file level: a pool wider than one connection
+        // buys no throughput and produces SQLITE_BUSY under concurrent writes.
+        config.setMaximumPoolSize(1);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(10000);
+
+        // The single connection is long-lived; expiring it only costs reconnect churn.
+        config.setIdleTimeout(0);
+        config.setMaxLifetime(0);
+
+        // WAL keeps readers from blocking the writer; busy_timeout absorbs short contention.
+        config.addDataSourceProperty("journal_mode", "WAL");
+        config.addDataSourceProperty("busy_timeout", "5000");
+
+        dataSource = new HikariDataSource(config);
+        createTables();
+    }
+
+    private void createTables() {
+        String sql = "CREATE TABLE IF NOT EXISTS player_virtual_keys (" +
+                "uuid VARCHAR(36) NOT NULL, " +
+                "key_id VARCHAR(100) NOT NULL, " +
+                "amount INT NOT NULL DEFAULT 0, " +
+                "PRIMARY KEY (uuid, key_id)" +
+                ");";
+
+        String sqlIpLimits = "CREATE TABLE IF NOT EXISTS ip_limits (" +
+                "ip VARCHAR(45) NOT NULL, " +
+                "crate_id VARCHAR(100) NOT NULL, " +
+                "uuid VARCHAR(36) NOT NULL, " +
+                "PRIMARY KEY (ip, crate_id, uuid)" +
+                ");";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             PreparedStatement ps2 = conn.prepareStatement(sqlIpLimits)) {
+            ps.executeUpdate();
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Could not create database tables: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Drains in-flight queries, then closes the pool.
+     *
+     * <p>Shutting the executor down first means a key purchase queued during the last
+     * tick still reaches disk instead of dying with the pool.</p>
+     */
+    public void close() {
+        dbExecutor.shutdown();
+        try {
+            if (!dbExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                plugin.getLogger().warning("Database tasks did not finish within 10s; forcing shutdown.");
+                dbExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            dbExecutor.shutdownNow();
+        }
+
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+        }
+    }
+
+    public CompletableFuture<Integer> getVirtualKeys(UUID uuid, String keyId) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "SELECT amount FROM player_virtual_keys WHERE uuid = ? AND key_id = ?";
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, uuid.toString());
+                ps.setString(2, keyId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("amount");
+                    }
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error getting virtual keys: " + e.getMessage());
+            }
+            return 0;
+        }, dbExecutor);
+    }
+
+    public CompletableFuture<Void> addVirtualKeys(UUID uuid, String keyId, int amount) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "INSERT INTO player_virtual_keys (uuid, key_id, amount) VALUES (?, ?, ?) " +
+                    "ON CONFLICT(uuid, key_id) DO UPDATE SET amount = amount + ?";
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, uuid.toString());
+                ps.setString(2, keyId);
+                ps.setInt(3, amount);
+                ps.setInt(4, amount);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error adding virtual keys: " + e.getMessage());
+            }
+        }, dbExecutor);
+    }
+
+    public CompletableFuture<Boolean> takeVirtualKeys(UUID uuid, String keyId, int amount) {
+        return CompletableFuture.supplyAsync(() -> {
+            String getSql = "SELECT amount FROM player_virtual_keys WHERE uuid = ? AND key_id = ?";
+            String updateSql = "UPDATE player_virtual_keys SET amount = amount - ? WHERE uuid = ? AND key_id = ?";
+            
+            try (Connection conn = dataSource.getConnection()) {
+                conn.setAutoCommit(false);
+                try (PreparedStatement getPs = conn.prepareStatement(getSql)) {
+                    getPs.setString(1, uuid.toString());
+                    getPs.setString(2, keyId);
+                    
+                    int currentAmount = 0;
+                    try (ResultSet rs = getPs.executeQuery()) {
+                        if (rs.next()) {
+                            currentAmount = rs.getInt("amount");
+                        }
+                    }
+                    
+                    if (currentAmount >= amount) {
+                        try (PreparedStatement updatePs = conn.prepareStatement(updateSql)) {
+                            updatePs.setInt(1, amount);
+                            updatePs.setString(2, uuid.toString());
+                            updatePs.setString(3, keyId);
+                            updatePs.executeUpdate();
+                        }
+                        conn.commit();
+                        return true;
+                    }
+                } catch (SQLException e) {
+                    conn.rollback();
+                    throw e;
+                } finally {
+                    conn.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error taking virtual keys: " + e.getMessage());
+            }
+            return false;
+        }, dbExecutor);
+    }
+    /**
+     * Sets the virtual key amount for a player to an exact value.
+     * Replaces whatever they currently hold.
+     */
+    public CompletableFuture<Void> setVirtualKeys(UUID uuid, String keyId, int amount) {
+        return CompletableFuture.runAsync(() -> {
+            String sql = "INSERT INTO player_virtual_keys (uuid, key_id, amount) VALUES (?, ?, ?) " +
+                    "ON CONFLICT(uuid, key_id) DO UPDATE SET amount = ?";
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, uuid.toString());
+                ps.setString(2, keyId);
+                ps.setInt(3, amount);
+                ps.setInt(4, amount);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error setting virtual keys: " + e.getMessage());
+            }
+        }, dbExecutor);
+    }
+
+    /**
+     * Returns all virtual key entries for a player as a map of keyId → amount.
+     */
+    public CompletableFuture<java.util.Map<String, Integer>> getAllVirtualKeys(UUID uuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            java.util.Map<String, Integer> keys = new java.util.LinkedHashMap<>();
+            String sql = "SELECT key_id, amount FROM player_virtual_keys WHERE uuid = ? AND amount > 0";
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, uuid.toString());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        keys.put(rs.getString("key_id"), rs.getInt("amount"));
+                    }
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error fetching all virtual keys: " + e.getMessage());
+            }
+            return keys;
+        }, dbExecutor);
+    }
+
+    public CompletableFuture<Boolean> checkAndRegisterIpLimit(String ip, String crateId, UUID playerUuid, int maxAccounts) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (maxAccounts <= 0) return true; // -1 means unlimited
+
+            String countSql = "SELECT COUNT(DISTINCT uuid) as cnt FROM ip_limits WHERE ip = ? AND crate_id = ?";
+            String checkPlayerSql = "SELECT 1 FROM ip_limits WHERE ip = ? AND crate_id = ? AND uuid = ?";
+            String insertSql = "INSERT OR IGNORE INTO ip_limits (ip, crate_id, uuid) VALUES (?, ?, ?)";
+
+            try (Connection conn = dataSource.getConnection()) {
+                conn.setAutoCommit(false);
+                try {
+                    // Check if player is already registered
+                    try (PreparedStatement psCheck = conn.prepareStatement(checkPlayerSql)) {
+                        psCheck.setString(1, ip);
+                        psCheck.setString(2, crateId);
+                        psCheck.setString(3, playerUuid.toString());
+                        try (ResultSet rs = psCheck.executeQuery()) {
+                            if (rs.next()) {
+                                // Already registered, so they are allowed
+                                return true;
+                            }
+                        }
+                    }
+
+                    // Count existing distinct accounts
+                    int currentAccounts = 0;
+                    try (PreparedStatement psCount = conn.prepareStatement(countSql)) {
+                        psCount.setString(1, ip);
+                        psCount.setString(2, crateId);
+                        try (ResultSet rs = psCount.executeQuery()) {
+                            if (rs.next()) {
+                                currentAccounts = rs.getInt("cnt");
+                            }
+                        }
+                    }
+
+                    if (currentAccounts >= maxAccounts) {
+                        conn.rollback();
+                        return false;
+                    }
+
+                    // Register new account
+                    try (PreparedStatement psInsert = conn.prepareStatement(insertSql)) {
+                        psInsert.setString(1, ip);
+                        psInsert.setString(2, crateId);
+                        psInsert.setString(3, playerUuid.toString());
+                        psInsert.executeUpdate();
+                    }
+                    
+                    conn.commit();
+                    return true;
+                } catch (SQLException e) {
+                    conn.rollback();
+                    throw e;
+                } finally {
+                    conn.setAutoCommit(true);
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error checking IP limit: " + e.getMessage());
+            }
+            return false;
+        }, dbExecutor);
+    }
+}

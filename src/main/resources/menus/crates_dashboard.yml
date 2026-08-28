@@ -1,0 +1,32 @@
+title: "<dark_gray>ᴀᴅᴍɪɴ <gray>| <color:#FCFF00>ᴄʀᴀᴛᴇꜱ"
+size: 54
+
+items:
+  create:
+    material: EMERALD
+    name: "<color:#00FF45><bold>+ ᴄʀᴇᴀᴛᴇ ɴᴇᴡ ᴄʀᴀᴛᴇ"
+    lore:
+      - "<gray>ᴄʟɪᴄᴋ ᴛᴏ ᴄʀᴇᴀᴛᴇ ᴀ ɴᴇᴡ ᴄʀᴀᴛᴇ."
+      
+  keys:
+    material: TRIPWIRE_HOOK
+    name: "<color:#FCFF00><bold>ᴋᴇʏꜱ ᴍᴀɴᴀɢᴇʀ"
+    lore:
+      - "<gray>ᴍᴀɴᴀɢᴇ ᴀʟʟ ʏᴏᴜʀ ᴠɪʀᴛᴜᴀʟ ᴋᴇʏꜱ ʜᴇʀᴇ."
+      
+  rarities:
+    material: NETHER_STAR
+    name: "<color:#FF2626><bold>ʀᴀʀɪᴛɪᴇꜱ ᴍᴀɴᴀɢᴇʀ"
+    lore:
+      - "<gray>ᴄʟɪᴄᴋ ᴛᴏ ᴍᴀɴᴀɢᴇ ʀᴇᴡᴀʀᴅ ʀᴀʀɪᴛɪᴇꜱ."
+
+  crate_format:
+    material: ENDER_CHEST
+    name: "<gold><bold><crate_name>"
+    lore:
+      - "<gray>ɪᴅ: <white><crate_id>"
+      - "<gray>ʀᴇᴡᴀʀᴅꜱ: <yellow><rewards_count>"
+      - "<gray>ᴀᴄᴄᴇᴘᴛᴇᴅ ᴋᴇʏꜱ: <yellow><keys_count>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ"

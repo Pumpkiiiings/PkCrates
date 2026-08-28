@@ -1,0 +1,53 @@
+title: "<color:#FCFF00><bold>✦ ᴘᴇɴᴅɪɴɢ ʀᴇᴡᴀʀᴅꜱ"
+
+items:
+  # ── Reward item displayed for each pending claim ──────────────────────────
+  claim_format:
+    lore:
+      - ""
+      - "<dark_gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      - "<gray>  ᴄʀᴀᴛᴇ:   <color:#00FF45><crate_id>"
+      - "<gray>  ʀᴇᴡᴀʀᴅ:  <color:#FCFF00><reward_id>"
+      - "<gray>  ʀᴇᴀꜱᴏɴ:  <white><reason>"
+      - "<gray>  ꜱᴛᴏʀᴇᴅ:  <color:#00FFFF><stored_at>"
+      - "<dark_gray>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴄʟᴀɪᴍ ᴛʜɪꜱ ʀᴇᴡᴀʀᴅ"
+      - ""
+
+  # ── Info button — shows total / maximum stored ─────────────────────────────
+  info:
+    material: PAPER
+    name: "<color:#00FFFF><bold>ᴘᴇɴᴅɪɴɢ ʀᴇᴡᴀʀᴅꜱ"
+    lore:
+      - ""
+      - "<gray>ꜱᴛᴏʀᴇᴅ: <white><pending> <dark_gray>/ <white><max>"
+      - ""
+      - "<dark_gray>ʀᴇᴡᴀʀᴅꜱ ᴛʜᴀᴛ ᴄᴏᴜʟᴅ ɴᴏᴛ ʙᴇ"
+      - "<dark_gray>ᴅᴇʟɪᴠᴇʀᴇᴅ ᴀʀᴇ ꜱᴛᴏʀᴇᴅ ʜᴇʀᴇ."
+
+  # ── Claim All button ───────────────────────────────────────────────────────
+  claim_all:
+    material: CHEST
+    name: "<color:#00FF45><bold>⬇ ᴄʟᴀɪᴍ ᴀʟʟ"
+    lore:
+      - ""
+      - "<gray>ᴀᴛᴛᴇᴍᴘᴛꜱ ᴛᴏ ᴅᴇʟɪᴠᴇʀ ᴀʟʟ"
+      - "<gray>ᴘᴇɴᴅɪɴɢ ʀᴇᴡᴀʀᴅꜱ ᴀᴛ ᴏɴᴄᴇ."
+      - ""
+      - "<color:#00FF45>▶ ᴄʟɪᴄᴋ ᴛᴏ ᴄʟᴀɪᴍ ᴇᴠᴇʀʏᴛʜɪɴɢ"
+
+  # ── Close button ───────────────────────────────────────────────────────────
+  close:
+    material: BARRIER
+    name: "<color:#FF2626><bold>ᴄʟᴏꜱᴇ"
+    lore: []
+
+  # ── Empty state placeholder ────────────────────────────────────────────────
+  empty:
+    material: LIME_STAINED_GLASS_PANE
+    name: "<color:#00FF45><bold>✓ ɴᴏ ᴘᴇɴᴅɪɴɢ ʀᴇᴡᴀʀᴅꜱ!"
+    lore:
+      - ""
+      - "<gray>ʏᴏᴜ ʜᴀᴠᴇ ɴᴏ ꜱᴛᴏʀᴇᴅ ʀᴇᴡᴀʀᴅꜱ."
+      - "<gray>ᴋᴇᴇᴘ ᴏᴘᴇɴɪɴɢ ᴄʀᴀᴛᴇꜱ!"

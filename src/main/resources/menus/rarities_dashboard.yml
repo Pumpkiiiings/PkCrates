@@ -1,0 +1,23 @@
+title: "<dark_gray>ᴀᴅᴍɪɴ <gray>| <color:#FF2626>ʀᴀʀɪᴛɪᴇꜱ"
+
+items:
+  rarity_format:
+    lore:
+      - "<gray>ɪᴅ: <white><rarity_id>"
+      - "<gray>ᴡᴇɪɢʜᴛ: <yellow><weight>"
+      - "<gray>ᴄʜᴀɴᴄᴇ ᴍᴏᴅᴇ: <yellow><chance_mode>"
+      - "<gray>ᴘʀɪᴏʀɪᴛʏ: <yellow><priority>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ"
+
+  create:
+    material: EMERALD
+    name: "<color:#00FF45><bold>+ ᴄʀᴇᴀᴛᴇ ɴᴇᴡ ʀᴀʀɪᴛʏ"
+    lore:
+      - "<gray>ᴄʟɪᴄᴋ ᴛᴏ ᴄʀᴇᴀᴛᴇ ᴀ ɴᴇᴡ ʀᴀʀɪᴛʏ."
+
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴄʀᴀᴛᴇꜱ"
+    lore: []

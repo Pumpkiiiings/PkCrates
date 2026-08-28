@@ -1,0 +1,24 @@
+title: "<color:#8B4513>ᴇᴅɪᴛᴏʀ > <yellow><crate_id> <color:#8B4513>> ʀᴇᴡᴀʀᴅꜱ"
+
+items:
+  reward_format_append:
+    lore:
+      - ""
+      - "<gray>ᴡᴇɪɢʜᴛ (ᴘʀᴏʙᴀʙɪʟɪᴛʏ): <yellow><weight>"
+      - "<gray>ɢʟᴏʙᴀʟ ʟɪᴍɪᴛ: <yellow><limit>"
+      - ""
+      - "<color:#00FF45>▶ ʟᴇꜰᴛ-ᴄʟɪᴄᴋ ᴛᴏ ᴇᴅɪᴛ ʀᴇᴡᴀʀᴅ"
+      - "<color:#FF2626>▶ ꜱʜɪꜰᴛ-ʀɪɢʜᴛ-ᴄʟɪᴄᴋ ᴛᴏ ʀᴇᴍᴏᴠᴇ ʀᴇᴡᴀʀᴅ"
+      
+  help:
+    material: BOOK
+    name: "<color:#00FFFF><bold>ʜᴏᴡ ᴛᴏ ᴄʀᴇᴀᴛᴇ ʀᴇᴡᴀʀᴅꜱ?"
+    lore:
+      - "<gray>ᴏᴘᴇɴ ʏᴏᴜʀ ɪɴᴠᴇɴᴛᴏʀʏ (ᴇ) ᴀɴᴅ ᴄʟɪᴄᴋ"
+      - "<gray>ᴏɴ ᴀɴʏ ɪᴛᴇᴍ ᴛᴏ ᴀᴅᴅ ɪᴛ"
+      - "<gray>ᴀꜱ ᴀ ɴᴇᴡ ʀᴇᴡᴀʀᴅ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ."
+      
+  back:
+    material: ARROW
+    name: "<color:#FF2626><bold>ʙᴀᴄᴋ ᴛᴏ ᴄʀᴀᴛᴇ ᴇᴅɪᴛᴏʀ"
+    lore: []

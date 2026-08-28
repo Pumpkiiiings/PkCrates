@@ -1,0 +1,22 @@
+# Configure key drop schedules
+# 
+# Time matching properties (all optional, but you must specify at least one):
+# month: 1-12
+# day_of_month: 1-31
+# day_of_week: "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
+# hour: 0-23
+# minute: 0-59
+#
+# If a property is omitted, the schedule will trigger every time that property changes (e.g. if month is omitted, it will trigger every month).
+
+schedules:
+  example_weekend_drop:
+    day_of_week: "SATURDAY"
+    hour: 15
+    minute: 30
+    key_id: "basic_key"
+    amount: 1
+    message:
+      - ""
+      - "<green>A basic key has been given to all online players!"
+      - ""
