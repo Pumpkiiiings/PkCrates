@@ -45,7 +45,10 @@ public class EffectEngine {
         for (EffectTrigger trigger : EffectTrigger.values()) {
             List<String> lines = effectsSection.getStringList(trigger.getConfigKey());
             if (lines.isEmpty()) continue;
-            globals.put(trigger, compile(lines, "config.yml effects." + trigger.getConfigKey()));
+            String source = "config.yml effects." + trigger.getConfigKey();
+            globals.put(trigger, trigger == EffectTrigger.AMBIENT
+                    ? compileAmbient(lines, source)
+                    : compile(lines, source));
         }
     }
 
@@ -72,6 +75,24 @@ public class EffectEngine {
     }
 
     /**
+     * Compiles a repeating ambient bundle and rejects effects that would be unsafe to
+     * execute five times per second (sounds and entity-spawning fireworks).
+     */
+    public List<EffectSpec> compileAmbient(List<String> lines, String source) {
+        List<EffectSpec> specs = compile(lines, source);
+        List<EffectSpec> safe = new ArrayList<>();
+        for (EffectSpec spec : specs) {
+            if (spec.isAmbientSafe()) {
+                safe.add(spec);
+            } else {
+                plugin.getLogger().warning("Ignoring non-particle ambient effect in " + source
+                        + ": ambient bundles run repeatedly and only accept particle lines");
+            }
+        }
+        return safe;
+    }
+
+    /**
      * Plays the bundle for a trigger.
      *
      * <p>Must be called from the main thread — it spawns particles and entities.</p>
@@ -84,9 +105,9 @@ public class EffectEngine {
     public void play(EffectTrigger trigger, @Nullable List<EffectSpec> crateSpecs,
                      Location origin, @Nullable Player viewer) {
 
-        List<EffectSpec> specs = (crateSpecs != null && !crateSpecs.isEmpty())
-                ? crateSpecs
-                : globals.get(trigger);
+        // null means "no crate override". An explicitly configured bundle that compiles
+        // to an empty list remains empty instead of unexpectedly falling back to globals.
+        List<EffectSpec> specs = crateSpecs != null ? crateSpecs : globals.get(trigger);
 
         if (specs == null || specs.isEmpty()) return;
 

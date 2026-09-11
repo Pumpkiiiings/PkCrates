@@ -7,6 +7,9 @@ import java.util.Locale;
  */
 public enum EffectTrigger {
 
+    /** Repeating particle bundle rendered around placed crates while players are nearby. */
+    AMBIENT("ambient"),
+
     /** The moment a key is consumed and the animation begins. */
     ON_OPEN("on-open"),
 

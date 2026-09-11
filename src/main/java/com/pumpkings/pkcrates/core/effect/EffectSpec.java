@@ -250,6 +250,14 @@ public final class EffectSpec {
         }
     }
 
+    /**
+     * Ambient bundles intentionally accept particles only. Sounds every four ticks are
+     * unpleasant, and repeating fireworks would create entities continuously.
+     */
+    public boolean isAmbientSafe() {
+        return kind == Kind.PARTICLE;
+    }
+
     private void playParticle(Location origin) {
         List<Vector> offsets = shape.offsets(count, radius, height);
         Object data = color != null && requiresColor(particle)

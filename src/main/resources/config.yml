@@ -34,6 +34,15 @@ settings:
 # in addition to these.
 # ─────────────────────────────────────────────────────────────────────────────
 effects:
+  # Repeating ambient particles around every placed crate that does not select a
+  # preset with ambient-effect. Particle lines only; sounds/fireworks are rejected.
+  ambient:
+    - 'particle:ENCHANT shape:CIRCLE radius:0.8 height:0.5 count:6'
+
+  ambient-settings:
+    # Crates farther than this from every player do no particle work. Clamped 8..128.
+    max-distance: 48.0
+
   # Fired the moment the key is consumed and the animation starts.
   on-open:
     - 'sound:BLOCK_IRON_TRAPDOOR_OPEN volume:1.0 pitch:1.0'

@@ -1,0 +1,70 @@
+# Scripted animation example. Copy this file and change the id.
+id: SCRIPTED_EXAMPLE
+duration: 120
+seed: 1337
+
+variables:
+  orbit-radius: 1.35
+  reveal-height: 1.8
+
+limits:
+  max-actions-per-tick: 100
+  max-displays: 20
+
+# Tracks are only organizational: every track advances in parallel.
+tracks:
+  effects:
+    - at: 0
+      use: electric-opening
+
+    - at: 100
+      use: legendary-reveal
+
+  displays:
+    - at: 5
+      spawn:
+        id: preview
+        item: RANDOM_REWARD
+        offset: [0, 0.2, 0]
+        scale: 0.55
+        teleport-duration: 1
+
+    - during: 5..75
+      every: 1
+      animate:
+        id: preview
+        motion: ORBIT
+        radius: orbit-radius
+        height: '0.5 + sin(time * 0.12) * 0.2'
+        rotations: 3
+        spin: 5
+        easing: ease-in-out
+
+    - at: 76
+      remove: preview
+
+    - at: 78
+      spawn:
+        id: winner
+        item: WINNER
+        offset: [0, 0.2, 0]
+        scale: 0.05
+
+    - during: 78..110
+      animate:
+        id: winner
+        motion: RISE
+        height: reveal-height
+        scale-from: 0.05
+        scale-to: 1.4
+        spin: 2
+        easing: ease-out-back
+
+  ui:
+    - at: 100
+      title:
+        text: '<gold><bold>{winner}</bold></gold>'
+        subtitle: '<gray>{crate}</gray>'
+        fade-in: 200
+        stay: 1200
+        fade-out: 300

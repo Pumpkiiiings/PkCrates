@@ -114,6 +114,13 @@ public class CrateTickTask extends BukkitRunnable {
             } catch (Exception e) {
                 plugin.getLogger().severe("Animation error on crate '" + session.getCrate().getId()
                         + "': " + e.getMessage());
+                if (currentPhase != null) {
+                    try {
+                        currentPhase.onEnd(session);
+                    } catch (Exception cleanupError) {
+                        plugin.getLogger().warning("Animation cleanup also failed: " + cleanupError.getMessage());
+                    }
+                }
                 session.setFinished(true);
             }
 

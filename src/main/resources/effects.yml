@@ -1,0 +1,18 @@
+# Reusable effect components for scripted animations.
+# Each action uses the same compact syntax as config.yml effects.
+components:
+  electric-opening:
+    actions:
+      - 'sound:ENTITY_LIGHTNING_BOLT_THUNDER volume:0.6 pitch:1.8'
+      - 'particle:ELECTRIC_SPARK shape:VORTEX radius:1.4 height:3.0 count:80'
+
+  legendary-reveal:
+    actions:
+      - 'particle:DUST color:#FFEE55 size:1.6 shape:STAR radius:1.5 count:50'
+      - 'particle:TOTEM_OF_UNDYING shape:SPHERE radius:1.2 count:45'
+      - 'firework:FFEE55 type:STAR'
+
+  soft-magic:
+    actions:
+      - 'particle:ENCHANT shape:CIRCLE radius:0.8 height:0.5 count:12'
+

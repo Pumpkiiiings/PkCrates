@@ -24,6 +24,11 @@ dependencies {
     // a mismatch compiles fine and fails at runtime with NoClassDefFoundError.
     compileOnly("com.zaxxer:HikariCP:5.1.0")
     compileOnly("org.xerial:sqlite-jdbc:3.46.1.3")
+
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core:3.27.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
@@ -40,6 +45,9 @@ tasks {
     }
     javadoc {
         options.encoding = "UTF-8"
+    }
+    test {
+        useJUnitPlatform()
     }
     processResources {
         filteringCharset = "UTF-8"

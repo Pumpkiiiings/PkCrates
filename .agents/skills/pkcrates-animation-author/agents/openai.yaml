@@ -1,0 +1,4 @@
+interface:
+  display_name: "PkCrates Animation Author"
+  short_description: "Create validated scripted crate animations"
+  default_prompt: "Use $pkcrates-animation-author to create a safe scripted animation for my PkCrates crate."

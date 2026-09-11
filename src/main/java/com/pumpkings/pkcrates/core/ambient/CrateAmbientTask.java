@@ -1,6 +1,9 @@
 package com.pumpkings.pkcrates.core.ambient;
 
 import com.pumpkings.pkcrates.core.model.Crate;
+import com.pumpkings.pkcrates.core.effect.EffectEngine;
+import com.pumpkings.pkcrates.core.effect.EffectSpec;
+import com.pumpkings.pkcrates.core.effect.EffectTrigger;
 import com.pumpkings.pkcrates.infrastructure.config.CrateRegistry;
 import com.pumpkings.pkcrates.infrastructure.location.CrateLocationManager;
 import org.bukkit.Bukkit;
@@ -37,14 +40,20 @@ public class CrateAmbientTask extends BukkitRunnable {
 
     private final CrateLocationManager locationMgr;
     private final CrateRegistry crateRegistry;
+    private final EffectEngine effectEngine;
+    private final double maxDistanceSquared;
     private final Random random = new Random();
 
     // Internal tick counter used by effects that need time-based motion.
     private int tick = 0;
 
-    public CrateAmbientTask(CrateLocationManager locationMgr, CrateRegistry crateRegistry) {
+    public CrateAmbientTask(CrateLocationManager locationMgr, CrateRegistry crateRegistry,
+                            EffectEngine effectEngine, double maxDistance) {
         this.locationMgr  = locationMgr;
         this.crateRegistry = crateRegistry;
+        this.effectEngine = effectEngine;
+        double safeDistance = Math.max(8.0, Math.min(128.0, maxDistance));
+        this.maxDistanceSquared = safeDistance * safeDistance;
     }
 
     // -----------------------------------------------------------------------
@@ -71,19 +80,39 @@ public class CrateAmbientTask extends BukkitRunnable {
                     Crate crate = crateRegistry.getCrate(crateId);
                     if (crate == null) continue;
 
-                    AmbientEffect effect = crate.getAmbientEffect();
-                    if (effect == AmbientEffect.NONE) continue;
-
                     // Centre of the crate block
                     Location center = new Location(world,
                             vec.getBlockX() + 0.5,
                             vec.getBlockY() + 0.5,
                             vec.getBlockZ() + 0.5);
 
-                    renderEffect(effect, center, world);
+                    // Ambient work is skipped entirely when nobody can see it. Chunk
+                    // loading alone is not enough: spawn chunks may stay loaded forever.
+                    if (!hasNearbyPlayer(world, center)) continue;
+
+                    if (crate.hasEffects(EffectTrigger.AMBIENT)) {
+                        List<EffectSpec> specs = crate.getEffects(EffectTrigger.AMBIENT,
+                                effectEngine::compileAmbient);
+                        effectEngine.play(EffectTrigger.AMBIENT, specs, center, null);
+                    } else if (crate.getAmbientEffect() != AmbientEffect.NONE) {
+                        // Existing GUI presets remain supported and take precedence over
+                        // the global ambient bundle.
+                        renderEffect(crate.getAmbientEffect(), center, world);
+                    } else if (effectEngine.hasGlobal(EffectTrigger.AMBIENT)) {
+                        effectEngine.play(EffectTrigger.AMBIENT, null, center, null);
+                    }
                 }
             }
         }
+    }
+
+    private boolean hasNearbyPlayer(World world, Location center) {
+        for (org.bukkit.entity.Player player : world.getPlayers()) {
+            if (player.getLocation().distanceSquared(center) <= maxDistanceSquared) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // -----------------------------------------------------------------------

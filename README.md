@@ -30,6 +30,10 @@ keys are ignored, and invalid lines are reported once at load and then skipped.
 
 ```yaml
 effects:
+  ambient:
+    # Repeats five times per second while a player is within max-distance.
+    # Ambient bundles accept particles only.
+    - 'particle:ENCHANT shape:CIRCLE radius:0.8 height:0.5 count:6'
   on-open:
     - 'particle:ELECTRIC_SPARK shape:VORTEX radius:1.4 height:3.0 count:80'
     - 'sound:ENTITY_LIGHTNING_BOLT_THUNDER volume:0.6 pitch:1.8'
@@ -56,17 +60,66 @@ effects:
 
 - `config.yml` under `effects:` — the global default.
 - A crate file under `effects:` — **replaces** the global bundle for that trigger, so a
-  crate that only defines `on-open` still uses the global `on-reward`.
+  crate that only defines `on-open` still uses global `ambient` and `on-reward`.
 - `rarities.yml` under `effects.list` — plays **in addition** to the crate's, layered on top
   of the existing `particle` / `sound` / `firework-color` fields, which keep working.
 
 Particle counts are capped at 500 per line so a mistyped `count:` cannot stall the server.
+Ambient rendering runs every four ticks but skips unloaded chunks and crates with no player
+within `effects.ambient-settings.max-distance` (48 blocks by default). A crate-specific
+`effects.ambient` takes precedence over the preset selected by `ambient-effect`; that preset
+takes precedence over the global ambient bundle. Sounds and fireworks are rejected from
+ambient bundles because repeating either five times per second is unsafe.
 `REDSTONE`/`DUST`, `TOTEM`/`TOTEM_OF_UNDYING`, `SMOKE`/`SMOKE_NORMAL` and
 `VILLAGER_HAPPY`/`HAPPY_VILLAGER` are interchangeable, so configs written against older
 Bukkit naming still load.
 
 The crate-opening title now comes from `messages.yml` (`crate.opening-title` /
 `crate.opening-subtitle`); blank both to disable it.
+
+## 🎬 Scripted animations
+
+Advanced animations live in `plugins/PkCrates/animations/*.yml`; reusable particle, sound,
+and firework components live in `plugins/PkCrates/effects.yml`. The bundled
+`SCRIPTED_EXAMPLE` demonstrates parallel tracks, deterministic random previews, expressions,
+display spawning, orbit/rise movement, easing, effects, titles, and cleanup.
+
+```yaml
+id: ZEUS_SCRIPT
+duration: 120
+variables:
+  radius: 1.4
+tracks:
+  effects:
+    - at: 0
+      use: electric-opening
+    - at: 100
+      use: legendary-reveal
+  displays:
+    - at: 5
+      spawn: {id: preview, item: RANDOM_REWARD, offset: [0, 0.2, 0], scale: 0.55}
+    - during: 5..75
+      animate:
+        id: preview
+        motion: ORBIT
+        radius: radius
+        height: '0.5 + sin(time * 0.12) * 0.2'
+        rotations: 3
+        spin: 5
+        easing: ease-in-out
+    - at: 76
+      remove: preview
+```
+
+Supported motions are `ORBIT`, `SPIRAL`, `HELIX`, `RISE`, `FALL`, `BOUNCE`, `FLOAT`,
+`FLY_TO_PLAYER`, and expression-driven `CUSTOM`. Expressions are sandboxed arithmetic—not
+JavaScript—and expose only documented numeric variables and functions. Definitions are parsed,
+resolved, and budget-checked on load; malformed scripts are rejected while built-in Java
+animations remain available as fallbacks. Script ids cannot replace built-in ids.
+
+For AI-assisted authoring, load the project skill
+`.agents/skills/pkcrates-animation-author/SKILL.md`. Its schema enumerates every implemented
+field and explicitly prohibits inventing unsupported syntax.
 
 ## 🔄 Migrating from PhoenixCrates
 

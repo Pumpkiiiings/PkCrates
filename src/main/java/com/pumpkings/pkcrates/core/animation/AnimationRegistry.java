@@ -19,6 +19,10 @@ public class AnimationRegistry {
         }
         return null;
     }
+
+    public void unregister(String id) {
+        if (id != null) registry.remove(id.toUpperCase());
+    }
     
     public java.util.Set<String> getRegisteredAnimations() {
         return registry.keySet();

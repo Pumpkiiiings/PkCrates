@@ -12,6 +12,7 @@ public class PkCratesPlugin extends JavaPlugin {
     private com.pumpkings.pkcrates.presentation.menu.MenuManager menuManager;
     private com.pumpkings.pkcrates.infrastructure.database.DatabaseManager databaseManager;
     private com.pumpkings.pkcrates.core.animation.AnimationRegistry animationRegistry;
+    private com.pumpkings.pkcrates.core.animation.script.ScriptAnimationLoader scriptAnimationLoader;
     private com.pumpkings.pkcrates.infrastructure.config.MessageManager messageManager;
     private com.pumpkings.pkcrates.infrastructure.config.MenuConfigManager menuConfigManager;
     private com.pumpkings.pkcrates.infrastructure.config.RarityRegistry rarityRegistry;
@@ -134,12 +135,17 @@ public class PkCratesPlugin extends JavaPlugin {
         animationRegistry.register("LIGHTNING", com.pumpkings.pkcrates.core.animation.impl.LightningAnimation::new);
         animationRegistry.register("GALAXY", com.pumpkings.pkcrates.core.animation.impl.GalaxyAnimation::new);
         animationRegistry.register("FROZEN", com.pumpkings.pkcrates.core.animation.impl.FrozenAnimation::new);
+
+        // YAML animations load after built-ins, so an operator may intentionally replace
+        // a built-in id while retaining Java implementations as a safe fallback.
+        scriptAnimationLoader = new com.pumpkings.pkcrates.core.animation.script.ScriptAnimationLoader(
+                this, effectEngine, animationRegistry);
+        scriptAnimationLoader.loadAll();
         
         tickTask = new com.pumpkings.pkcrates.core.task.CrateTickTask(this, sessionManager, claimService, claimConfig, messageManager);
         tickTask.runTaskTimer(this, 1L, 1L);
 
-        ambientTask = new com.pumpkings.pkcrates.core.ambient.CrateAmbientTask(locationMgr, crateRegistry);
-        ambientTask.runTaskTimer(this, 1L, com.pumpkings.pkcrates.core.ambient.CrateAmbientTask.PERIOD_TICKS);
+        startAmbientTask();
         
         getServer().getPluginManager().registerEvents(promptManager, this);
         com.pumpkings.pkcrates.presentation.listener.CrateInteractListener crateInteractListener =
@@ -269,6 +275,13 @@ public class PkCratesPlugin extends JavaPlugin {
         locationMgr.load();
         massOpeningGlobalSettings.load(configManager.getConfig());
         effectEngine.loadGlobals(configManager.getConfig().getConfigurationSection("effects"));
+        if (scriptAnimationLoader != null) {
+            scriptAnimationLoader.loadAll();
+        }
+        if (ambientTask != null) {
+            ambientTask.cancel();
+        }
+        startAmbientTask();
         if (scheduleManager != null) {
             scheduleManager.load();
         }
@@ -286,6 +299,15 @@ public class PkCratesPlugin extends JavaPlugin {
     
     public com.pumpkings.pkcrates.core.animation.AnimationRegistry getAnimationRegistry() {
         return animationRegistry;
+    }
+
+    private void startAmbientTask() {
+        double ambientDistance = configManager.getConfig()
+                .getDouble("effects.ambient-settings.max-distance", 48.0);
+        ambientTask = new com.pumpkings.pkcrates.core.ambient.CrateAmbientTask(
+                locationMgr, crateRegistry, effectEngine, ambientDistance);
+        ambientTask.runTaskTimer(this, 1L,
+                com.pumpkings.pkcrates.core.ambient.CrateAmbientTask.PERIOD_TICKS);
     }
 
     public com.pumpkings.pkcrates.core.effect.EffectEngine getEffectEngine() {
